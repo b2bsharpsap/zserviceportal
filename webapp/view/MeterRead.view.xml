@@ -1,0 +1,621 @@
+<mvc:View
+    controllerName="zserviceportal.controller.MeterRead"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:t="sap.ui.table"
+    xmlns:core="sap.ui.core"
+>
+    <!--
+         height="100%">
+        Equipment List grid.
+        Uses sap.ui.table.Table because the requirements call for:
+          - per-column sort & filter
+          - configurable visibility
+          - export to Excel
+          - row multi-selection (checkbox)
+        sap.ui.table.Table exposes column header menus that ship with
+        these capabilities out of the box.
+    -->
+    <Page
+        title="{i18n>pageTitle}"
+        showNavButton="false"
+        busy="{view>/busy}"
+        busyIndicatorDelay="0"
+    >
+        <!-- ─────── Sub-header: Customer Info ─────── -->
+
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Title
+                        text="Meter Readings Report / Submit"
+                        level="H2"
+                    />
+                </contentLeft>
+                <contentRight>
+                    <Button
+                        icon="sap-icon://person-placeholder"
+                        text="{view>/userName}"
+                        type="Transparent"
+                    />
+                    <Button
+                        text="Back"
+                        type="Transparent"
+                        press="onPressBackButton"
+                    />
+                </contentRight>
+            </Bar>
+        </customHeader>
+
+        <!-- Customer Section -->
+
+        <!--
+        <Panel headerText="Customer Information">
+            <HBox>
+                <VBox>
+                   
+                </VBox>
+
+                <VBox>
+                  
+                </VBox>
+            </HBox>
+        </Panel>
+       
+        <Panel
+            headerText="Search"
+            width="100%"
+        >
+        -->
+            <HBox>
+                <VBox>
+                    <Toolbar width="28rem">
+                        <Label
+                            text="{i18n>lblCustomer}"
+                            class="spHeaderLabel"
+                            width="6rem"
+                        />
+                        <Text
+                            visible="true"
+                            text="COUNTY OF LOS ANGELES [846100]"
+                        />
+                    </Toolbar>
+
+                      <Toolbar width="28rem">
+                        <Label
+                            text="{i18n>lblAddress}"
+                            class="spHeaderLabel"
+                            width="6rem"
+                        />
+                        <Text
+                            text="13409 CARMENITA RD, CA, US"
+                            width="14rem"
+                            visible="true"
+                        />
+                    </Toolbar>                  
+                    <Toolbar
+                        class="sapUiTinyMarginTop "
+                        width="28rem"
+                    >
+                        <Label
+                            text="Model:"
+                            width="6rem"
+                        />
+                        <Input
+                            value="{/search/Model}"
+                            width="14rem"
+                        />
+                    </Toolbar>
+
+                    <Toolbar
+                        class="sapUiTinyMarginTop"
+                        width="28rem"
+                    >
+                        <Button
+                            text="Search"
+                            visible="{= !${/selectedEquipment/NoAccess}}"
+                            class="spOpenEquipmentBtn sapUiTinyMarginEnd"
+                            press="openEquipmentListPopup"
+                        />
+                        <Button
+                            visible="false"
+                            text="Find"
+                            class="spOpenEquipmentBtn sapUiTinyMarginEnd"
+                            press="getServiceRequestList"
+                        />
+                    </Toolbar>
+                </VBox>
+                <VBox>
+
+
+                      <Toolbar
+                        class="sapUiTinyMarginTop "
+                        width="28rem"
+                    >
+                        <Label
+                            text="Sharp Equipment ID:"
+                            width="9rem"
+                        />
+                        <Input
+                            value="{/search/equipmentId}"
+                            width="9rem"
+                        />
+                    </Toolbar>
+
+
+
+                    <Toolbar
+                        class="sapUiTinyMarginTop "
+                        width="28rem"
+                    >
+                        <Label
+                            text="Cust Equipment ID:"
+                            width="9rem"
+                        />
+                        <Input
+                            value="{/search/model}"
+                            width="9rem"
+                        />
+                    </Toolbar>
+                    <Toolbar
+                        class="sapUiTinyMarginTop "
+                        width="28rem"
+                    >
+                        <Label
+                            text="Serial:"
+                            width="9rem"
+                        />
+                        <Input
+                            value="{/search/serial}"
+                            width="9rem"
+                        />
+                    </Toolbar>
+                </VBox>
+            </HBox>
+
+            <!--
+        </Panel> -->
+
+        <Panel width="100%"  >
+            <content>
+                <t:Table
+                    id="tblMeterRead"                  
+                    rows="{modelServiceReq>/ServiceReqCollection}"
+                    selectionMode="Single"
+                    selectionBehavior="RowSelector"
+                    enableColumnReordering="true"
+                    enableColumnFreeze="true"
+                    enableSelectAll="true"
+                    rowSelectionChange=".onRequestSelection"
+                    ariaLabelledBy="ttlEquipmentList"
+                >
+                    <t:extension>
+                        <OverflowToolbar>
+                            <Title
+                                text="Meter Readings"
+                                level="H4"
+                            />
+                            <ToolbarSpacer />
+
+                            <!-- Free text search across the grid -->
+                            <SearchField
+                                width="20rem"
+                                placeholder="{i18n>btnSearch}"
+                                search=".onSearch"
+                                liveChange=".onSearchLive"
+                            />
+
+                            <!-- Export to Excel -->
+
+                            <Image
+                                press="onExportToExcel"
+                                src="images/icon_export_excel.png"
+                                tooltip="Export to Excel"
+                            />
+                            <!-- Configure columns to display or hide -->
+                            <Image
+                                id="imgConfigureCols789"
+                                press="onConfigureColumns"
+                                src="images/icon_settings.png"
+                                tooltip="Configure Columns"
+                            />
+                        </OverflowToolbar>
+                    </t:extension>
+
+                    <t:columns>
+                        <!-- Equipment ID  (hyperlink) -->
+                        <t:Column
+                            width="7rem"
+                            sortProperty="EquipmentId"
+                            filterProperty="EquipmentId"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Sharp Equip ID" />
+                            </t:label>
+                            <t:template>
+                                <Text text="{modelServiceReq>Order}" />
+                                <!-- press=".onEquipmentIdPress" -->
+                            </t:template>
+                        </t:Column>
+
+                        <!-- Customer Equipment ID  (hyperlink) -->
+                        <t:Column
+                            width="8rem"
+                            sortProperty="CustomerEquipmentId"
+                            filterProperty="CustomerEquipmentId"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Customer Equip Id" />
+                            </t:label>
+                            <t:template>
+                                <Text text="{modelServiceReq>Date}" />
+                            </t:template>
+                        </t:Column>
+
+                        <!-- Model -->
+                        <t:Column
+                            width="7rem"
+                            sortProperty="Model"
+                            filterProperty="Model"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Model" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>Model}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <!-- Serial Number -->
+                        <t:Column
+                            width="8rem"
+                            sortProperty="SerialNumber"
+                            filterProperty="SerialNumber"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Serial" />
+                            </t:label>
+                            <t:template>
+                                <Text text="{modelServiceReq>Serial}" />
+                            </t:template>
+                        </t:Column>
+
+                        <!-- Open Service Request  (hyperlink) -->
+                        <t:Column
+                            width="10rem"
+                            sortProperty="OpenServiceRequest"
+                            filterProperty="OpenServiceRequest"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Meter Type" />
+                            </t:label>
+                            <t:template>
+                                <Text text="{modelServiceReq>MeterType}" />
+                            </t:template>
+                        </t:Column>
+
+                        <!-- Open Service Request  (hyperlink) -->
+                        <t:Column
+                            width="10rem"
+                            sortProperty="OpenServiceRequest"
+                            filterProperty="OpenServiceRequest"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Prior Billed Reading" />
+                            </t:label>
+                            <t:template>
+                                <Text text="{modelServiceReq>Status}" />
+                            </t:template>
+                        </t:Column>
+
+                        <!-- Open Order  (hyperlink) -->
+                        <t:Column
+                            width="8rem"
+                            sortProperty="OpenOrder"
+                            filterProperty="OpenOrder"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Billed Date" />
+                            </t:label>
+                            <t:template>
+                                <Text text="{modelServiceReq>BilledDate}" />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Last Updated Reading" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>EquipmentId}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Updated Date" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>CustEquip}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Settlement Date" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>Model}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Reading Origin" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>Origin}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="New Reading" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>Location}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="New Reading Date" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>Address}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Description" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>City1}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Model Description" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>Region}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Contact Name" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>ContactName}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Location" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>Description}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Address" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>Description}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="City" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>Description}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="State" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>Description}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Zip" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>Description}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Type" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>Description}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column
+                            width="7rem"
+                            sortProperty="City"
+                            filterProperty="City"
+                            autoResizable="true"
+                        >
+                            <t:label>
+                                <Label text="Message" />
+                            </t:label>
+                            <t:template>
+                                <Text
+                                    text="{modelServiceReq>Description}"
+                                    wrapping="false"
+                                />
+                            </t:template>
+                        </t:Column>
+                    </t:columns>
+                </t:Table>
+
+
+                 <HBox  class="sapUiTinyMarginTop ">
+                    <Button
+                        id="btnSubmit"
+                        text="Submit New Readings"
+                        class="spOpenEquipmentBtn sapUiTinyMarginTop"
+                        press=".onOpenActivity"
+                    />
+                </HBox>
+            </content>
+        </Panel>
+    </Page>
+</mvc:View>

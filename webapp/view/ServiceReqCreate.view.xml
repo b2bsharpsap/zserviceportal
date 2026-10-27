@@ -1,0 +1,443 @@
+<mvc:View
+    controllerName="zserviceportal.controller.ServiceReqCreate"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:t="sap.ui.table"
+    xmlns:core="sap.ui.core"
+>
+    <!--
+         height="100%">
+        Equipment List grid.
+        Uses sap.ui.table.Table because the requirements call for:
+          - per-column sort & filter
+          - configurable visibility
+          - export to Excel
+          - row multi-selection (checkbox)
+        sap.ui.table.Table exposes column header menus that ship with
+        these capabilities out of the box.
+    -->
+    <Page
+        id="Service_Requests11"
+        title="{i18n>pageTitle}"
+        showNavButton="false"
+        busy="{view>/busy}"
+        busyIndicatorDelay="0"
+    >
+        <!-- ─────── Sub-header: Customer Info ─────── -->
+
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Title
+                        text="Service Request - Create"
+                        level="H2"
+                    />
+                </contentLeft>
+
+                <contentRight>
+                    <Button
+                        icon="sap-icon://person-placeholder"
+                        text="{view>/userName}"
+                        type="Transparent"
+                    />
+
+                    <Button
+                        text="Back"
+                        type="Transparent"
+                        press="onPressBackButton"
+                    />
+                </contentRight>
+            </Bar>
+        </customHeader>
+
+        <!-- Customer Section -->
+        <Panel headerText="Customer Information">
+            <HBox>
+                <VBox>
+                    <Toolbar width="28rem">
+                        <Label
+                            text="{i18n>lblCustomer}"
+                            class="spHeaderLabel"
+                            width="7rem"
+                        />
+                        <Text
+                            id="txtCustomer133"
+                            visible="true"
+                            text="COUNTY OF LOS ANGELES [846100]"
+                        />
+                    </Toolbar>
+                </VBox>
+
+                <VBox>
+                    <Toolbar width="28rem">
+                        <Label
+                            text="{i18n>lblAddress}"
+                            class="spHeaderLabel"
+                            width="7rem"
+                        />
+                        <Text
+                            text="13409 CARMENITA RD, CA, US"
+                            width="14rem"
+                            visible="true"
+                        />
+                    </Toolbar>
+                </VBox>
+            </HBox>
+        </Panel>
+
+        <Panel
+            headerText="Fill in the Request Details"
+            width="100%"
+        >
+            <HBox>
+                <VBox>
+                    <Toolbar
+                        class="sapUiTinyMarginTop "
+                        width="28rem"
+                    >
+                        <Label
+                            text="Sharp Equipment ID:"
+                            width="9rem"
+                        />
+                        <Input
+                            id="inpEquipmentId15"
+                            value="{/search/equipmentId}"
+                            width="9rem"
+                        />
+                    </Toolbar>
+                    <Toolbar
+                        class="sapUiTinyMarginTop "
+                        width="28rem"
+                    >
+                        <Label
+                            text="Model:"
+                            width="9rem"
+                        />
+                        <Input
+                            id="inpCustomerEquipmentId15"
+                            value="{/search/customerEquipmentId}"
+                            width="9rem"
+                        />
+                    </Toolbar>
+
+                    <Toolbar
+                        class="sapUiTinyMarginTop"
+                        width="28rem"
+                    >
+                        <Button
+                            id="btnCreateSearch"
+                            text="Search"
+                            visible="{= !${/selectedEquipment/NoAccess}}"
+                            class="spOpenEquipmentBtn sapUiTinyMarginEnd"
+                            press="openEquipmentListPopup"
+                        />
+                        <!--
+                        <Button
+                            id="btnCreateRequest12"
+                            text="Find"
+                            class="spOpenEquipmentBtn sapUiTinyMarginEnd"
+                            press="getServiceRequestList"
+                        />
+                        -->
+                    </Toolbar>
+                </VBox>
+                <VBox>
+                    <Toolbar
+                        class="sapUiTinyMarginTop "
+                        width="28rem"
+                    >
+                        <Label
+                            text="Cust Equipment ID:"
+                            width="8rem"
+                        />
+                        <Input
+                            id="inpModel15"
+                            value="{/search/model}"
+                            width="9rem"
+                        />
+                    </Toolbar>
+                    <Toolbar
+                        class="sapUiTinyMarginTop "
+                        width="28rem"
+                    >
+                        <Label
+                            text="Serial:"
+                            width="8rem"
+                        />
+                        <Input
+                            id="inpSerial41"
+                            value="{/search/serial}"
+                            width="9rem"
+                        />
+                    </Toolbar>
+                </VBox>
+            </HBox>
+        </Panel>
+        <Panel
+            headerText="Service Request Details"
+            width="100%"
+        >
+            <content>
+                <HBox>
+                    <VBox>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Sharp Equipment ID:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Order}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Model:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Description}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Serial:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Status}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Address:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/EquipmentId}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Contact Name:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Model}"
+                            />
+                        </Toolbar>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Contract Terms:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Sernr}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Request Reference:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Street}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="General Topic:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Terms}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Detailed Concern :"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Terms}"
+                            />
+                        </Toolbar>
+
+                        <!--
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Service Category:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Terms}"
+                            />
+                        </Toolbar>
+                        -->
+                    </VBox>
+                    <VBox>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Customer Equip ID:"
+                                width="9rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Date}"
+                            />
+                        </Toolbar>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Model Description:"
+                                width="8rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Description}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Location:"
+                                width="8rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Description}"
+                            />
+                        </Toolbar>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="City, State, Zip:"
+                                width="8rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/CustEquip}"
+                            />
+                        </Toolbar>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Contact Number"
+                                width="8rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Description}"
+                            />
+                        </Toolbar>
+                        <!--
+                        <Toolbar width="25rem">
+                            <Label
+                                text="{i18n>lblLocation}"
+                                width="8rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Location2}"
+                            />
+                        </Toolbar>
+                        -->
+
+                        <!--
+                        <Toolbar width="25rem">
+                            <Label
+                                text="{i18n>lblCityStateZip}"
+                                width="8rem"
+                            />
+                            <Text
+                                text="{
+                            parts: [
+                                {path:'/selectedEquipment/City'},
+                                {path:'/selectedEquipment/State'},
+                                {path:'/selectedEquipment/Zip'}
+                            ],
+                            formatter: '.formatter.cityStateZip'
+                        }"
+                            />
+                        </Toolbar>
+                        -->
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Description*:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Terms}"
+                            />
+                        </Toolbar>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="XXXZZZ:"
+                                width="10rem"
+                                visible="false"
+                            />
+                        </Toolbar>
+                        <!--
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Service Item:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/selectedService/Terms}"
+                            />
+                        </Toolbar>
+                        -->
+                    </VBox>
+                </HBox>
+
+                <!-- Additional Info / Request Notes as text areas -->
+                
+                <l:Grid
+                    defaultSpan="L6 M6 S12"
+                    containerQuery="true"
+                    class="sapUiSmallMarginTop"
+                >
+                    <l:content>
+                        <VBox>
+                            <Label
+                                text="{i18n>lblAdditionalInfo}"
+                                class="spHeaderLabel"
+                            />
+                            <TextArea
+                                value="{/serviceRequest/AdditionalInfo}"
+                                editable="false"
+                                rows="3"
+                                width="100%"
+                            />
+                        </VBox>
+                        <VBox>
+                            <Label
+                                text="{i18n>lblRequestNotes}"
+                                class="spHeaderLabel"
+                                visible="false"
+                            />
+                            <TextArea
+                                value="{/serviceRequest/RequestNotes}"
+                                editable="false"
+                                rows="3"
+                                width="100%"
+                                visible="false"
+                            />
+                        </VBox>
+                    </l:content>
+                </l:Grid>
+
+             
+
+                <HBox>
+                    <Button
+                        id="btnCreateRequest123"
+                        text="Create Request"
+                        class="spOpenEquipmentBtn sapUiTinyMarginEnd"
+                        press=".onOpenActivity"
+                    />
+                </HBox>
+            </content>
+        </Panel>
+    </Page>
+</mvc:View>

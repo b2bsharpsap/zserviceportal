@@ -1,0 +1,783 @@
+<mvc:View
+    controllerName="zserviceportal.controller.ServiceRequestAI"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
+
+    <!-- ═══════════════════════════════════════════════════════
+         ROOT: NavContainer (routing target)
+    ════════════════════════════════════════════════════════ -->
+    <NavContainer id="rootNav">
+        <pages>
+
+            <!-- ═══════════════════════════════════════════════
+                 MAIN PAGE
+            ══════════════════════════════════════════════════ -->
+            <Page id="Service_RequestsAI"
+                title="{i18n>pageTitle}"
+                showNavButton="false"
+                busy="{view>/busy}"
+                busyIndicatorDelay="0">
+
+                <!-- ─────── Sub-header: Customer Info ─────── -->
+                <customHeader>
+                    <Bar>
+                        <contentLeft>
+                            <Title text="{i18n>pageTitle}" level="H2"/>
+                        </contentLeft>
+                        <contentMiddle>
+                            <HBox class="srpCustomerBar" alignItems="Center" wrap="Wrap">
+                                <Label text="{i18n>labelCustomer}:" design="Bold"
+                                       class="sapUiSmallMarginEnd"/>
+                                <Text text="{view>/custName}" class="sapUiSmallMarginEnd"/>
+                                <Label text="|" class="sapUiSmallMarginEnd" visible="{= !!${view>/custName}}"/>
+                                <Label text="{i18n>labelAddress}:" design="Bold"
+                                       class="sapUiSmallMarginEnd" visible="{= !!${view>/custAddress}}"/>
+                                <Text text="{view>/custAddress}"/>
+                            </HBox>
+                        </contentMiddle>
+                        <contentRight>
+                            <Button icon="sap-icon://person-placeholder"
+                                    text="{view>/userName}" type="Transparent"/>
+
+                             <Button text="Back" type="Transparent" press="onPressBackButton"/>
+
+                        </contentRight>
+                    </Bar>
+                </customHeader>
+
+                <!-- ─────── PAGE CONTENT ─────── -->
+                <content>
+                    <VBox class="sapUiSmallMargin">
+
+                        <!-- ═══════════════════════════════════
+                             1. SEARCH PANEL
+                        ════════════════════════════════════ -->
+                        <Panel id="searchPanel"
+                               headerText="{i18n>panelSearchTitle}"
+                               expandable="true"
+                               expanded="true"
+                               class="sapUiSmallMarginBottom">
+                            <content>
+                                <VBox class="sapUiSmallMargin">
+
+                                    <!-- Row 1: Status + Date Range -->
+                                    <HBox wrap="Wrap" alignItems="Center"
+                                          class="sapUiTinyMarginBottom">
+                                        <CheckBox id="chkOpen"
+                                                  text="{i18n>labelOpen}"
+                                                  selected="true"
+                                                  class="sapUiSmallMarginEnd"/>
+                                        <CheckBox id="chkClosed"
+                                                  text="{i18n>labelClosed}"
+                                                  selected="false"
+                                                  class="sapUiSmallMarginEnd"/>
+                                        <Label text="{i18n>labelBetween}"
+                                               class="sapUiSmallMarginEnd sapUiSmallMarginBegin"/>
+                                        <Label text="{i18n>labelFromDate}:" class="sapUiTinyMarginEnd"/>
+                                        <DatePicker id="dpFromDate"
+                                                    valueFormat="yyyy-MM-dd"
+                                                    displayFormat="MM/dd/yyyy"
+                                                    class="sapUiSmallMarginEnd"
+                                                    width="130px"/>
+                                        <Label text="{i18n>labelToDate}:" class="sapUiTinyMarginEnd"/>
+                                        <DatePicker id="dpToDate"
+                                                    valueFormat="yyyy-MM-dd"
+                                                    displayFormat="MM/dd/yyyy"
+                                                    width="130px"/>
+                                    </HBox>
+
+                                    <!-- Row 2: Field grid -->
+                                    <l:Grid defaultSpan="L4 M6 S12"
+                                            class="sapUiTinyMarginBottom">
+                                        <l:content>
+                                            <VBox>
+                                                <Label text="{i18n>labelSharpRequest}"/>
+                                                <Input id="inSharpReq"
+                                                       placeholder="e.g. 8060802259"
+                                                       width="100%"/>
+                                            </VBox>
+                                            <VBox>
+                                                <Label text="{i18n>labelRequestReference}"/>
+                                                <Input id="inReqRef"
+                                                       placeholder="e.g. 39300051MA_R3"
+                                                       width="100%"/>
+                                            </VBox>
+                                            <VBox>
+                                                <Label text="{i18n>labelEquipmentId}"/>
+                                                <Input id="inEquipId"
+                                                       placeholder="e.g. 105852291"
+                                                       width="100%"/>
+                                            </VBox>
+                                            <VBox>
+                                                <Label text="{i18n>labelCustomerEquipmentId}"/>
+                                                <Input id="inCustEquipId"
+                                                       placeholder="e.g. 522911058"
+                                                       width="100%"/>
+                                            </VBox>
+                                            <VBox>
+                                                <Label text="{i18n>labelModel}"/>
+                                                <Input id="inModel"
+                                                       placeholder="e.g. E274F-BK"
+                                                       width="100%"/>
+                                            </VBox>
+                                            <VBox>
+                                                <Label text="{i18n>labelSerial}"/>
+                                                <Input id="inSerial"
+                                                       placeholder="e.g. 39300051MA"
+                                                       width="100%"/>
+                                            </VBox>
+                                        </l:content>
+                                    </l:Grid>
+
+                                    <!-- Search / Clear buttons -->
+                                    <HBox class="sapUiSmallMarginTop">
+                                        <Button id="btnSearch"
+                                                text="{i18n>btnSearch}"
+                                                type="Emphasized"
+                                                icon="sap-icon://search"
+                                                press="onSearch"
+                                                class="sapUiSmallMarginEnd"/>
+                                        <Button id="btnClear"
+                                                text="{i18n>btnClear}"
+                                                icon="sap-icon://clear-all"
+                                                press="onClear"/>
+                                    </HBox>
+                                </VBox>
+                            </content>
+                        </Panel>
+
+                        <!-- ═══════════════════════════════════
+                             2. SERVICE REQUESTS TABLE PANEL
+                        ════════════════════════════════════ -->
+                        <Panel id="requestsPanel"
+                               class="sapUiSmallMarginBottom">
+                            <headerToolbar>
+                                <OverflowToolbar>
+                                    <Title text="{i18n>panelRequestsTitle}" level="H3"/>
+                                    <ToolbarSpacer/>
+                                    <SearchField id="srSearch"
+                                                 width="220px"
+                                                 placeholder="{i18n>toolbarSearch}"
+                                                 liveChange="onTableSearch"/>
+                                    <Button icon="sap-icon://sort"
+                                            tooltip="{i18n>btnSort}"
+                                            press="onOpenSortDialog"
+                                            type="Transparent"/>
+                                    <Button icon="sap-icon://filter"
+                                            tooltip="{i18n>btnFilter}"
+                                            press="onOpenFilterDialog"
+                                            type="Transparent"/>
+                                    <Button id="btnExport"
+                                            icon="sap-icon://excel-attachment"
+                                            tooltip="{i18n>btnExport}"
+                                            press="onExport"
+                                            type="Transparent"/>
+                                    <Button id="btnColumns"
+                                            icon="sap-icon://action-settings"
+                                            tooltip="{i18n>btnColumns}"
+                                            press="onColumnSettings"
+                                            type="Transparent"/>
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <content>
+
+                                <!-- Service Requests Table -->
+                                <Table id="srTable"
+                                       items="{view>/filteredRequests}"
+                                       mode="MultiSelect"
+                                       growing="true"
+                                       growingThreshold="50"
+                                       growingScrollToLoad="false"
+                                       busy="{view>/requestsBusy}"
+                                       busyIndicatorDelay="0"
+                                       noDataText="{i18n>msgNoResults}"
+                                       selectionChange="onRowSelectionChange"
+                                       class="sapUiSmallMarginBottom">
+
+                                    <columns>
+                                        <!-- Sharp Request -->
+                                        <Column id="colSharpReq" width="9rem">
+                                            <header>
+                                                <Label text="{i18n>colSharpRequest}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Date -->
+                                        <Column id="colDate" width="7rem">
+                                            <header>
+                                                <Label text="{i18n>colDate}" design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Description -->
+                                        <Column id="colDescription" width="14rem">
+                                            <header>
+                                                <Label text="{i18n>colDescription}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Additional Info -->
+                                        <Column id="colAddInfo" width="14rem">
+                                            <header>
+                                                <Label text="{i18n>colAddInfo}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Request Reference -->
+                                        <Column id="colReqRef" width="10rem">
+                                            <header>
+                                                <Label text="{i18n>colRequestReference}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Last Status -->
+                                        <Column id="colStatus" width="11rem">
+                                            <header>
+                                                <Label text="{i18n>colLastStatus}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Status Time -->
+                                        <Column id="colStatusTime" width="9rem">
+                                            <header>
+                                                <Label text="{i18n>colStatusTime}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Equipment ID -->
+                                        <Column id="colEquipId" width="8rem">
+                                            <header>
+                                                <Label text="{i18n>colEquipmentId}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Customer Equipment ID -->
+                                        <Column id="colCustEquipId" width="10rem">
+                                            <header>
+                                                <Label text="{i18n>colCustomerEquipmentId}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Model -->
+                                        <Column id="colModel1" width="7rem">
+                                            <header>
+                                                <Label text="{i18n>colModel}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Serial -->
+                                        <Column id="colSerial1" width="8rem">
+                                            <header>
+                                                <Label text="{i18n>colSerial}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Location -->
+                                        <Column id="colLocation1" width="8rem">
+                                            <header>
+                                                <Label text="{i18n>colLocation}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Address -->
+                                        <Column id="colAddress1" width="12rem">
+                                            <header>
+                                                <Label text="{i18n>colAddress}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- City -->
+                                        <Column id="colCity" width="7rem">
+                                            <header>
+                                                <Label text="{i18n>colCity}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- State -->
+                                        <Column id="colState1" width="5rem">
+                                            <header>
+                                                <Label text="{i18n>colState}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Contract Terms (initially hidden) -->
+                                        <Column id="colContractTerms" width="8rem"
+                                                visible="false">
+                                            <header>
+                                                <Label text="{i18n>colContractTerms}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Model Description (initially hidden) -->
+                                        <Column id="colModelDesc" width="14rem"
+                                                visible="false">
+                                            <header>
+                                                <Label text="{i18n>colModelDescription}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Contact Name (initially hidden) -->
+                                        <Column id="colContactName" width="9rem"
+                                                visible="false">
+                                            <header>
+                                                <Label text="{i18n>colContactName}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                        <!-- Contact Number (initially hidden) -->
+                                        <Column id="colContactNum" width="9rem"
+                                                visible="false">
+                                            <header>
+                                                <Label text="{i18n>colContactNumber}"
+                                                       design="Bold"/>
+                                            </header>
+                                        </Column>
+                                    </columns>
+
+                                    <!-- ── Table Rows ── -->
+                                    <items>
+                                        <ColumnListItem id="srRow"
+                                                        type="Active"
+                                                        press="onRowPress">
+                                            <cells>
+                                                <!-- Sharp Request – hyperlink -->
+                                                <Link text="{view>SharpReq}"
+                                                      press="onSharpReqPress"
+                                                      wrapping="false"/>
+
+                                                <!-- Date -->
+                                                <Text text="{
+                                                    path: 'view>Date',
+                                                    formatter: '.formatter.formatDate'
+                                                }"/>
+
+                                                <!-- Description -->
+                                                <Text text="{view>Description}"
+                                                      wrapping="false"
+                                                      maxLines="1"/>
+
+                                                <!-- Additional Info (50 chars) -->
+                                                <Text text="{
+                                                    path: 'view>AddInfo',
+                                                    formatter: '.formatter.truncate50'
+                                                }"
+                                                      wrapping="false"
+                                                      maxLines="1"/>
+
+                                                <!-- Request Reference -->
+                                                <Text text="{view>ReqRef}"/>
+
+                                                <!-- Last Status – ObjectStatus -->
+                                                <ObjectStatus
+                                                    text="{
+                                                        path: 'view>Status',
+                                                        formatter: '.formatter.statusText'
+                                                    }"
+                                                    state="{
+                                                        path: 'view>Status',
+                                                        formatter: '.formatter.statusState'
+                                                    }"/>
+
+                                                <!-- Status Time -->
+                                                <Text text="{
+                                                    path: 'view>StatusTime',
+                                                    formatter: '.formatter.formatDate'
+                                                }"/>
+
+                                                <!-- Equipment ID – hyperlink -->
+                                                <Link text="{view>EquipId}"
+                                                      press="onEquipIdPress"
+                                                      wrapping="false"/>
+
+                                                <!-- Customer Equipment ID – hyperlink -->
+                                                <Link text="{view>CustEquipId}"
+                                                      press="onEquipIdPress"
+                                                      wrapping="false"/>
+
+                                                <!-- Model -->
+                                                <Text text="{view>Model}"/>
+
+                                                <!-- Serial -->
+                                                <Text text="{view>Serial}"/>
+
+                                                <!-- Location -->
+                                                <Text text="{view>Location}"/>
+
+                                                <!-- Address – Google Maps link -->
+                                                <Link text="{view>Address}"
+                                                      press="onAddressPress"
+                                                      wrapping="false"/>
+
+                                                <!-- City -->
+                                                <Text text="{view>City}"/>
+
+                                                <!-- State -->
+                                                <Text text="{view>State}"/>
+
+                                                <!-- Contract Terms -->
+                                                <Text text="{view>ContractTerms}"/>
+
+                                                <!-- Model Description -->
+                                                <Text text="{view>ModelDesc}"/>
+
+                                                <!-- Contact Name -->
+                                                <Text text="{view>ContactName}"/>
+
+                                                <!-- Contact Number -->
+                                                <Text text="{view>ContactNum}"/>
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+
+                                <!-- ── Action Buttons Bar ──
+                                     Visible only when NoAccess is blank -->
+                                <Toolbar id="actionBar"
+                                         class="srpActionBar"
+                                         visible="{= !${view>/noAccess}}">
+                                    <Button id="btnCreateRequest1"
+                                            text="{i18n>btnCreateRequest}"
+                                            type="Emphasized"
+                                            icon="sap-icon://create"
+                                            press="onCreateRequest"/>
+                                    <Button id="btnCreateOrder"
+                                            text="{i18n>btnCreateOrder}"
+                                            type="Emphasized"
+                                            icon="sap-icon://business-objects-experience"
+                                            press="onCreateOrder"
+                                            class="sapUiSmallMarginBegin"/>
+                                    <Button id="btnViewOrders"
+                                            text="{i18n>btnViewOrders}"
+                                            type="Default"
+                                            icon="sap-icon://detail-view"
+                                            press="onViewOrders"
+                                            class="sapUiSmallMarginBegin"/>
+                                    <Button id="btnViewRequests1"
+                                            text="{i18n>btnViewRequests}"
+                                            type="Default"
+                                            icon="sap-icon://list"
+                                            press="onViewRequests"
+                                            class="sapUiSmallMarginBegin"/>
+                                    <Button id="btnMeterReadings"
+                                            text="{i18n>btnMeterReadings}"
+                                            type="Default"
+                                            icon="sap-icon://measure"
+                                            press="onMeterReadings"
+                                            class="sapUiSmallMarginBegin"/>
+                                </Toolbar>
+
+                            </content>
+                        </Panel>
+
+                        <!-- ═══════════════════════════════════
+                             3. REQUEST DETAILS PANEL
+                        ════════════════════════════════════ -->
+                        <Panel id="detailPanel"
+                               visible="{view>/detailVisible}"
+                               busy="{view>/detailBusy}"
+                               busyIndicatorDelay="0"
+                               class="sapUiSmallMarginBottom">
+                            <headerToolbar>
+                                <Toolbar>
+                                    <Title text="{i18n>panelDetailsTitle}"
+                                           level="H3"/>
+                                    <!-- Tracking Info link – visible when URL is present -->
+                                    <ToolbarSpacer/>
+                                    <Link id="trackingLink"
+                                          text="Tracking Info"
+                                          press="onTrackingPress"
+                                          visible="{= !!${view>/detail/TrackingUrl}}"/>
+                                </Toolbar>
+                            </headerToolbar>
+                            <content>
+                                <VBox class="sapUiSmallMargin">
+
+                                    <!-- ── Section: Request Information ── -->
+                                    <Title text="{i18n>sectionRequestInfo}"
+                                           level="H5"
+                                           class="sapUiTinyMarginBottom sapUiTinyMarginTop"/>
+                                    <f:SimpleForm id="detailForm"
+                                                  editable="false"
+                                                  layout="ColumnLayout"
+                                                  columnsXL="4"
+                                                  columnsL="4"
+                                                  columnsM="2"
+                                                  labelSpanXL="2"
+                                                  labelSpanL="2"
+                                                  labelSpanM="2"
+                                                  labelSpanS="12"
+                                                  emptySpanXL="0"
+                                                  emptySpanL="0"
+                                                  emptySpanM="0"
+                                                  class="srpDetailsForm">
+                                        <f:content>
+                                            <!-- Row 1 -->
+                                            <Label text="{i18n>labelSharpReq}"/>
+                                            <Text id="detSharpReq"
+                                                  text="{view>/detail/SharpReq}"/>
+
+                                            <Label text="{i18n>labelDate}"/>
+                                            <Text id="detDate"
+                                                  text="{
+                                                      path: 'view>/detail/Date',
+                                                      formatter: '.formatter.formatDate'
+                                                  }"/>
+
+                                            <!-- Row 2 -->
+                                            <Label text="{i18n>labelDescription}"/>
+                                            <Text id="detDescription"
+                                                  text="{view>/detail/Description}"/>
+
+                                            <Label text="{i18n>labelRequestRef}"/>
+                                            <Text id="detReqRef"
+                                                  text="{view>/detail/ReqRef}"/>
+
+                                            <!-- Row 3 -->
+                                            <Label text="{i18n>labelLastStatus}"/>
+                                            <ObjectStatus
+                                                id="detStatus"
+                                                text="{
+                                                    path: 'view>/detail/Status',
+                                                    formatter: '.formatter.statusText'
+                                                }"
+                                                state="{
+                                                    path: 'view>/detail/Status',
+                                                    formatter: '.formatter.statusState'
+                                                }"/>
+
+                                            <Label text="{i18n>labelStatusTime}"/>
+                                            <Text id="detStatusTime"
+                                                  text="{
+                                                      path: 'view>/detail/StatusTime',
+                                                      formatter: '.formatter.formatDate'
+                                                  }"/>
+                                        </f:content>
+                                    </f:SimpleForm>
+
+                                    <!-- ── Section: Equipment ── -->
+                                    <Title text="{i18n>sectionEquipment}"
+                                           level="H5"
+                                           class="sapUiTinyMarginBottom sapUiSmallMarginTop"/>
+                                    <f:SimpleForm editable="false"
+                                                  layout="ColumnLayout"
+                                                  columnsXL="4"
+                                                  columnsL="4"
+                                                  columnsM="2"
+                                                  labelSpanXL="2"
+                                                  labelSpanL="2"
+                                                  labelSpanM="2"
+                                                  labelSpanS="12"
+                                                  emptySpanXL="0"
+                                                  emptySpanL="0"
+                                                  emptySpanM="0">
+                                        <f:content>
+                                            <Label text="{i18n>labelEquipId}"/>
+                                            <Text id="detEquipId"
+                                                  text="{view>/detail/EquipId}"/>
+
+                                            <Label text="{i18n>labelCustEquipId}"/>
+                                            <Text id="detCustEquipId"
+                                                  text="{view>/detail/CustEquipId}"/>
+
+                                            <Label text="{i18n>labelModelDetail}"/>
+                                            <Text id="detModel"
+                                                  text="{view>/detail/Model}"/>
+
+                                            <Label text="{i18n>labelModelDesc}"/>
+                                            <Text id="detModelDesc"
+                                                  text="{view>/detail/ModelDesc}"/>
+
+                                            <Label text="{i18n>labelSerial}"/>
+                                            <Text id="detSerial"
+                                                  text="{view>/detail/Serial}"/>
+
+                                            <Label text="{i18n>labelLocation}"/>
+                                            <Text id="detLocation"
+                                                  text="{view>/detail/Location}"/>
+
+                                            <Label text="{i18n>labelAddressDetail}"/>
+                                            <Link id="detAddress"
+                                                  text="{view>/detail/Address}"
+                                                  press="onDetailAddressPress"/>
+
+                                            <Label text="{i18n>labelCityStateZip}"/>
+                                            <Text id="detCityStateZip"
+                                                  text="{view>/detail/_cityStateZip}"/>
+
+                                            <Label text="{i18n>labelContractTerms}"/>
+                                            <Text id="detContractTerms"
+                                                  text="{view>/detail/ContractTerms}"/>
+
+                                            <Label text="" />
+                                            <Text text="" />
+                                        </f:content>
+                                    </f:SimpleForm>
+
+                                    <!-- ── Section: Contact ── -->
+                                    <Title text="{i18n>sectionContact}"
+                                           level="H5"
+                                           class="sapUiTinyMarginBottom sapUiSmallMarginTop"/>
+                                    <f:SimpleForm editable="false"
+                                                  layout="ColumnLayout"
+                                                  columnsXL="4"
+                                                  columnsL="4"
+                                                  columnsM="2"
+                                                  labelSpanXL="2"
+                                                  labelSpanL="2"
+                                                  labelSpanM="2"
+                                                  labelSpanS="12"
+                                                  emptySpanXL="0"
+                                                  emptySpanL="0"
+                                                  emptySpanM="0">
+                                        <f:content>
+                                            <Label text="{i18n>labelContactName}"/>
+                                            <Text id="detContactName"
+                                                  text="{view>/detail/ContactName}"/>
+
+                                            <Label text="{i18n>labelContactNumber}"/>
+                                            <Text id="detContactNum"
+                                                  text="{view>/detail/ContactNum}"/>
+                                        </f:content>
+                                    </f:SimpleForm>
+
+                                    <!-- ── Section: Service Classification ── -->
+                                    <Title text="{i18n>sectionServiceClass}"
+                                           level="H5"
+                                           class="sapUiTinyMarginBottom sapUiSmallMarginTop"/>
+                                    <f:SimpleForm editable="false"
+                                                  layout="ColumnLayout"
+                                                  columnsXL="4"
+                                                  columnsL="4"
+                                                  columnsM="2"
+                                                  labelSpanXL="2"
+                                                  labelSpanL="2"
+                                                  labelSpanM="2"
+                                                  labelSpanS="12"
+                                                  emptySpanXL="0"
+                                                  emptySpanL="0"
+                                                  emptySpanM="0">
+                                        <f:content>
+                                            <Label text="{i18n>labelServiceCategory}"/>
+                                            <Text id="detServiceCategory"
+                                                  text="{view>/detail/ServiceCategory}"/>
+
+                                            <Label text="{i18n>labelServiceItem}"/>
+                                            <Text id="detServiceItem"
+                                                  text="{view>/detail/ServiceItem}"/>
+                                        </f:content>
+                                    </f:SimpleForm>
+
+                                    <!-- ── Section: Notes ── -->
+                                    <Title text="{i18n>sectionNotes}"
+                                           level="H5"
+                                           class="sapUiTinyMarginBottom sapUiSmallMarginTop"/>
+                                    <l:Grid defaultSpan="L6 M12 S12">
+                                        <l:content>
+                                            <VBox class="sapUiSmallMarginEnd">
+                                                <Label text="{i18n>labelAddInfoBox}"
+                                                       design="Bold"
+                                                       class="sapUiTinyMarginBottom"/>
+                                                <TextArea id="detAddInfo"
+                                                          value="{view>/detail/AddInfo}"
+                                                          editable="false"
+                                                          rows="4"
+                                                          width="100%"
+                                                          class="srpTextArea"/>
+                                            </VBox>
+                                            <VBox>
+                                                <Label text="{i18n>labelReqNotes}"
+                                                       design="Bold"
+                                                       class="sapUiTinyMarginBottom"/>
+                                                <TextArea id="detReqNotes"
+                                                          value="{view>/detail/ReqNotes}"
+                                                          editable="false"
+                                                          rows="4"
+                                                          width="100%"
+                                                          class="srpTextArea"/>
+                                            </VBox>
+                                        </l:content>
+                                    </l:Grid>
+
+                                    <!-- ── Status History Table ── -->
+                                    <Title text="{i18n>sectionStatusHistory}"
+                                           level="H5"
+                                           class="sapUiTinyMarginBottom sapUiSmallMarginTop"/>
+                                    <Table id="historyTable"
+                                           items="{view>/statusHistory}"
+                                           noDataText="{i18n>noHistoryText}"
+                                           showSeparators="Inner"
+                                           class="sapUiSmallMarginBottom">
+                                        <columns>
+                                            <Column width="14rem">
+                                                <header>
+                                                    <Label text="{i18n>colHistStatus}"
+                                                           design="Bold"/>
+                                                </header>
+                                            </Column>
+                                            <Column width="10rem">
+                                                <header>
+                                                    <Label text="{i18n>colHistTime}"
+                                                           design="Bold"/>
+                                                </header>
+                                            </Column>
+                                            <Column width="5rem" hAlign="Center">
+                                                <header>
+                                                    <Label text="{i18n>colHistActive}"
+                                                           design="Bold"/>
+                                                </header>
+                                            </Column>
+                                            <Column>
+                                                <header>
+                                                    <Label text="{i18n>colHistTechnician}"
+                                                           design="Bold"/>
+                                                </header>
+                                            </Column>
+                                        </columns>
+                                        <items>
+                                            <ColumnListItem>
+                                                <cells>
+                                                    <ObjectStatus
+                                                        text="{
+                                                            path: 'view>Status',
+                                                            formatter: '.formatter.statusText'
+                                                        }"
+                                                        state="{
+                                                            path: 'view>Status',
+                                                            formatter: '.formatter.statusState'
+                                                        }"/>
+                                                    <Text text="{
+                                                        path: 'view>Time',
+                                                        formatter: '.formatter.formatDate'
+                                                    }"/>
+                                                    <Text text="{view>Active}"/>
+                                                    <Text text="{view>Technician}"/>
+                                                </cells>
+                                            </ColumnListItem>
+                                        </items>
+                                    </Table>
+
+                                </VBox>
+                            </content>
+                        </Panel>
+
+                        <!-- Placeholder when no detail is selected -->
+                        <MessageStrip id="noDetailStrip"
+                                      text="{i18n>labelNoDetail}"
+                                      type="Information"
+                                      showIcon="true"
+                                      showCloseButton="false"
+                                      visible="{= !${view>/detailVisible}}"
+                                      class="sapUiSmallMarginBottom"/>
+
+                    </VBox>
+                </content>
+                <!-- ─────── END PAGE CONTENT ─────── -->
+
+            </Page>
+        </pages>
+    </NavContainer>
+
+</mvc:View>

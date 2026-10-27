@@ -1,0 +1,876 @@
+<mvc:View
+    controllerName="zserviceportal.controller.ServiceRequest"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:t="sap.ui.table"
+    xmlns:core="sap.ui.core"
+>
+    <!--
+         height="100%">
+        Equipment List grid.
+        Uses sap.ui.table.Table because the requirements call for:
+          - per-column sort & filter
+          - configurable visibility
+          - export to Excel
+          - row multi-selection (checkbox)
+        sap.ui.table.Table exposes column header menus that ship with
+        these capabilities out of the box.
+    -->
+    <Page
+        id="Service_Requests"
+        title="{i18n>pageTitle}"
+        showNavButton="false"
+        busy="{view>/busy}"
+        busyIndicatorDelay="0"
+    >
+        <!-- ─────── Sub-header: Customer Info ─────── -->
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Title
+                        text="{i18n>pageTitle}"
+                        level="H2"
+                    />
+                </contentLeft>              
+                <contentRight>
+                    <!--
+                    <Button
+                        icon="sap-icon://person-placeholder"
+                        text="{view>/userName}"
+                        type="Transparent"
+                    />
+                    -->
+                    <Button
+                        text="Back"
+                        type="Transparent"
+                        press="onPressBackButton"
+                    />
+                </contentRight>
+            </Bar>
+        </customHeader>               
+        <HBox class="sapUiTinyMarginTop">
+            <VBox>
+                <Toolbar
+                    class="sapUiTinyMarginTop"
+                    width="28rem"
+                >
+                    <Label
+                        text="{i18n>lblCustomer}"
+                        class="spHeaderLabel"
+                        width="8rem"
+                    />
+                    <Text
+                        id="txtCustomerDetails"
+                        visible="true"
+                        text="COUNTY OF LOS ANGELES [846100]"
+                    />                   
+                </Toolbar>
+                  <Toolbar
+                    class="sapUiTinyMarginTop "
+                    width="28rem"
+                >
+                <Label
+                        id="idLblAddress1"
+                        text="{i18n>lblAddress}"
+                        class="spHeaderLabel"
+                        width="8rem"
+                    />
+                    <Text
+                        id="idTxtAddress11"
+                        text=""
+                        width="16rem"
+                        visible="true"
+                    />
+                </Toolbar>
+                <Toolbar
+                    class="sapUiTinyMarginTop "
+                    width="28rem"
+                >
+                    <Label
+                        text="{i18n>lblEquipmentId}"
+                        width="8rem"
+                    />
+                    <Input
+                        id="inpEquipmentId1"
+                        value="{/search/equipmentId}"
+                        width="9rem"
+                    />
+                </Toolbar>               
+
+                <Toolbar
+                    class="sapUiTinyMarginTop "
+                    width="28rem"
+                >
+                    <Label
+                        text="Sharp Request ID:"
+                        width="8rem"
+                    />
+                    <Input
+                        id="inpCustomerEquipmentId12"
+                        value="{/search/customerEquipmentId}"
+                        width="9rem"
+                    />
+                </Toolbar>               
+                
+                <Toolbar
+                    class="sapUiTinyMarginTop"
+                    width="28rem"
+                >
+                    <CheckBox
+                        id="cbAudited"
+                        text="Open"
+                        selected="true"
+                        select="onSelectChkBox"
+                    />
+                    <CheckBox
+                        id="cbMissAttach"
+                        text="Closed"
+                        select="onSelectChkBox"
+                    />
+                </Toolbar>
+                
+                <Toolbar
+                    class="sapUiTinyMarginTop "
+                    width="28rem"
+                >
+                    <Button
+                        id="btnViewRequests12"
+                        text="Search"
+                        visible="{= !${/selectedEquipment/NoAccess}}"
+                        class="spOpenEquipmentBtn sapUiTinyMarginEnd"
+                        press=".getServiceRequestList"
+                    />
+                    <Input
+                        id="inpCustomerEquipmentId1123"
+                        value="{/search/customerEquipmentId}"
+                        width="9rem"
+                        visible="false"
+                    />
+                </Toolbar>
+            </VBox>
+            <VBox>
+                 <Toolbar
+                    class="sapUiTinyMarginTop "
+                    width="28rem"
+                >
+                    <Label
+                        text="Customer EquipId:"
+                        width="8rem"
+                    />
+                    <Input
+                        id="inpCustomerEquipmentId1"
+                        value="{/search/customerEquipmentId}"
+                        width="9rem"
+                    />
+                </Toolbar>
+              
+                <Toolbar
+                    class="sapUiTinyMarginTop "
+                    width="28rem"
+                >
+                    <Label
+                        text="{i18n>lblModel}"
+                        width="8rem"
+                    />
+                    <Input
+                        id="inpModel1"
+                        value="{/search/model}"
+                        width="9rem"
+                    />
+                </Toolbar>
+                <Toolbar
+                    class="sapUiTinyMarginTop "
+                    width="28rem"
+                >
+                    <Label
+                        text="{i18n>lblSerial}"
+                        width="8rem"
+                    />
+                    <Input
+                        id="inpSerial1"
+                        value="{/search/serial}"
+                        width="9rem"
+                    />
+                </Toolbar>
+
+                <Toolbar
+                    class="sapUiTinyMarginTop "
+                    width="28rem"
+                >
+                    <Label
+                        text="Request Reference:"
+                        width="8rem"
+                    />
+                    <Input
+                        id="inpSerial2"
+                        value="{/search/serial}"
+                        width="9rem"
+                    />
+                </Toolbar>  
+
+                            
+                <Toolbar
+                    class="sapUiTinyMarginTop "
+                    width="100%"
+                >
+                    <Label
+                        text="By Date:"
+                        width="4rem"
+                    />
+                   
+                    <DatePicker
+                        id="idFromDate"
+                        placeholder="From Date"
+                        change="handleFromDateChng"
+                        width="8rem"
+                        valueFormat="yyyyMMdd"
+                        value=""
+                    />                  
+                    <DatePicker
+                        id="idToDate"
+                        placeholder="To Date"
+                        change="handleToDateChng"
+                        width="8rem"
+                        valueFormat="yyyyMMdd"
+                        value=""
+                    />
+                </Toolbar>                         
+            </VBox>
+        </HBox>
+
+        <t:Table
+            id="idTblServiceRequest"
+            class="sapUiSmallMarginTop"
+            rows="{modelServiceReq>/results}"
+            selectionMode="Single"
+            selectionBehavior="RowSelector"
+            enableColumnReordering="true"
+            enableColumnFreeze="true"
+            enableSelectAll="true"
+            rowSelectionChange=".onRequestSelection"
+            ariaLabelledBy="ttlEquipmentList"
+        >
+            <t:extension>
+                <OverflowToolbar id="otbEquipmentListToolbar1">
+                    <Title
+                        id="ttlSerReqList"
+                        text="Service Request List"
+                        level="H4"
+                    />
+                    <ToolbarSpacer />
+                    <!-- Free text search across the grid -->
+                    <SearchField
+                        id="sfGridSearch1"
+                        width="20rem"
+                        placeholder="{i18n>btnSearch}"
+                        search=".onSearch"
+                        liveChange=".onSearchLive"
+                    />
+                    <!-- Export to Excel -->
+                    <Image
+                        press="onExportToExcel"
+                        src="images/icon_export_excel.png"
+                        tooltip="Export to Excel"
+                    />
+                    <!-- Configure columns to display or hide -->
+                    <Image
+                        id="imgConfigureCols1"
+                        press="onConfigureColumns"
+                        src="images/icon_settings.png"
+                        tooltip="Configure Columns"
+                    />
+                </OverflowToolbar>
+            </t:extension>
+            <t:columns>
+                <!-- Equipment ID  (hyperlink) -->
+                <t:Column
+                    id="colEquipmentId1"
+                    width="7rem"
+                    sortProperty="EtOrderList/Order"
+                    filterProperty="EtOrderList/Order"
+                    autoResizable="true"
+                    tooltip="Sharp Request ID"
+                >
+                    <t:label>
+                        <Label text="Sharp Request ID" />
+                    </t:label>
+                    <t:template>
+                        <Link
+                        text="{modelServiceReq>EtOrderList/Order}"
+                        press="onSharpRequestPress" />
+                        </t:template>
+
+
+                </t:Column>
+                <!-- Customer Equipment ID  (hyperlink) -->
+                <t:Column
+                    id="colCustomerEquipmentId1"
+                    width="5rem"
+                    sortProperty="EtOrderList/CreateDate"
+                    filterProperty="EtOrderList/CreateDate"
+                    autoResizable="true"
+                >
+                    <t:label>
+                        <Label text="Date" />
+                    </t:label>
+                    <t:template>
+                        <Text text="{modelServiceReq>EtOrderList/CreateDate}" />
+                    </t:template>
+                </t:Column>
+
+                <!-- Model -->
+                <t:Column
+                    id="colDescription1"
+                    width="8rem"
+                    sortProperty="EtOrderList/Description"
+                    filterProperty="EtOrderList/Description"
+                    autoResizable="true"
+                >
+                    <t:label>
+                        <Label text="Description" />
+                    </t:label>
+                    <t:template>
+                        <Text
+                            text="{modelServiceReq>EtOrderList/Description}"
+                            wrapping="true"
+                        />
+                    </t:template>
+                </t:Column>
+
+                                             
+                <!-- Open Service Request  (hyperlink) -->
+                <t:Column
+                    id="colOpenServiceRequest111"
+                    width="8rem"
+                    sortProperty="EtOrderList/ExRef"
+                    filterProperty="EtOrderList/ExRef"
+                    autoResizable="true"
+                    tooltip = "Request Reference"
+                >
+                    <t:label>
+                        <Label text="Request Reference" />
+                    </t:label>
+                    <t:template>
+                        <Text text="{modelServiceReq>EtOrderList/ExRef}" />
+                    </t:template>
+                </t:Column>
+
+                <!-- Open Service Request  (hyperlink) -->
+                <t:Column
+                    id="colOpenServiceRequest11"
+                    width="8rem"
+                    sortProperty="EtOrderList/Status"
+                    filterProperty="EtOrderList/Status"
+                    autoResizable="true"
+                >
+                    <t:label>
+                        <Label text="Last Status" />
+                    </t:label>
+                    <t:template>
+                        <Text text="{modelServiceReq>EtOrderList/Status}" />
+                    </t:template>
+                </t:Column>                
+                <!-- Open Order  (hyperlink) -->
+                <t:Column
+                    id="colOpenOrder1"
+                    width="8rem"
+                    sortProperty="EtOrderList/StatusDate"
+                    filterProperty="EtOrderList/StatusDate"
+                    autoResizable="true"
+                >
+                    <t:label>
+                        <Label text="Status Time" />
+                    </t:label>
+                    <t:template>
+                        <Text text="{modelServiceReq>EtOrderList/StatusDate}" />
+                    </t:template>
+                </t:Column>
+
+                <t:Column
+                    id="colTerms1"
+                    width="7rem"
+                    sortProperty="EtOrderList/EquipmentId"
+                    filterProperty="EtOrderList/EquipmentId"
+                    autoResizable="true"
+                     tooltip = "Sharp Equipment ID"
+                >
+                    <t:label>
+                        <Label text="Sharp Equipment ID" />
+                    </t:label>
+                    <t:template>
+                        <Text
+                            text="{modelServiceReq>EtOrderList/EquipmentId}"
+                            wrapping="false"
+                        />
+                    </t:template>
+                </t:Column>
+
+                <t:Column
+                    width="7rem"
+                    sortProperty="EtOrderList/CustEquip"
+                    filterProperty="EtOrderList/CustEquip"
+                    autoResizable="true"
+                    tooltip = "Customer Equipment ID"
+                >
+                    <t:label>
+                        <Label text="Customer Equipment ID" />
+                    </t:label>
+                    <t:template>
+                        <Text
+                            text="{modelServiceReq>EtOrderList/CustEquip}"
+                            wrapping="false"
+                        />
+                    </t:template>
+                </t:Column>
+
+                <t:Column
+                    width="7rem"
+                    sortProperty="EtOrderList/Model"
+                    filterProperty="EtOrderList/Model"
+                    autoResizable="true"
+                >
+                    <t:label>
+                        <Label text="Model" />
+                    </t:label>
+                    <t:template>
+                        <Text
+                            text="{modelServiceReq>EtOrderList/Model}"
+                            wrapping="false"
+                        />
+                    </t:template>
+                </t:Column>
+
+                <t:Column
+                    width="7rem"
+                    sortProperty="EtOrderList/Sernr"
+                    filterProperty="EtOrderList/Sernr"
+                    autoResizable="true"
+                >
+                    <t:label>
+                        <Label text="Serial" />
+                    </t:label>
+                    <t:template>
+                        <Text
+                            text="{modelServiceReq>EtOrderList/Sernr}"
+                            wrapping="false"
+                        />
+                    </t:template>
+                </t:Column>
+
+                <t:Column
+                    width="7rem"
+                    sortProperty="EtOrderList/Location"
+                    filterProperty="EtOrderList/Location"
+                    autoResizable="true"
+                >
+                    <t:label>
+                        <Label text="Location" />
+                    </t:label>
+                    <t:template>
+                        <Text
+                            text="{modelServiceReq>EtOrderList/Location}"
+                            wrapping="true"
+                        />
+                    </t:template>
+                </t:Column>
+
+                <t:Column
+                    width="7rem"
+                    sortProperty="EtOrderList/Street"
+                    filterProperty="EtOrderList/Street"
+                    autoResizable="true"
+                >
+                    <t:label>
+                        <Label text="Street" />
+                    </t:label>
+                    <t:template>
+                        <Text
+                            text="{modelServiceReq>EtOrderList/Street}"
+                            wrapping="true"
+                        />
+                    </t:template>
+                </t:Column>
+
+                <t:Column
+                    width="7rem"
+                    sortProperty="EtOrderList/City1"
+                    filterProperty="EtOrderList/City1"
+                    autoResizable="true"
+                >
+                    <t:label>
+                        <Label text="City" />
+                    </t:label>
+                    <t:template>
+                        <Text
+                            text="{modelServiceReq>EtOrderList/City1}"
+                            wrapping="false"
+                        />
+                    </t:template>
+                </t:Column>
+
+                <t:Column
+                    width="4rem"
+                    sortProperty="EtOrderList/Region"
+                    filterProperty="EtOrderList/Region"
+                    autoResizable="true"
+                >
+                    <t:label>
+                        <Label text="State" />
+                    </t:label>
+                    <t:template>
+                        <Text
+                            text="{modelServiceReq>EtOrderList/Region}"
+                            wrapping="false"
+                        />
+                    </t:template>
+                </t:Column>
+               
+               
+                <t:Column
+                    width="7rem"
+                    sortProperty="EtOrderList/Description"
+                    filterProperty="EtOrderList/Description"
+                    autoResizable="true"
+                    tooltip="Model Description"
+                >
+                    <t:label>
+                        <Label text="Model Description" />
+                    </t:label>
+                    <t:template>
+                        <Text
+                            text="{modelServiceReq>EtOrderList/Description}"
+                            wrapping="true"
+                        />
+                    </t:template>
+                </t:Column>
+
+                <t:Column
+                    width="7rem"
+                    sortProperty="EtOrderList/ServContact"
+                    filterProperty="EtOrderList/ServContact"
+                    autoResizable="true"
+                >
+                    <t:label>
+                        <Label text="Contact Name" />
+                    </t:label>
+                    <t:template>
+                        <Text
+                            text="{modelServiceReq>EtOrderList/ServContact}"
+                            wrapping="true"
+                        />
+                    </t:template>
+                </t:Column>
+
+                <t:Column
+                    width="7rem"
+                    sortProperty="EtOrderList/ServPhone"
+                    filterProperty="EtOrderList/ServPhone"
+                    autoResizable="true"
+                    tooltip="Contact Number"
+                >
+                    <t:label>
+                        <Label text="Contact Number" />
+                    </t:label>
+                    <t:template>
+                        <Text
+                            text="{modelServiceReq>EtOrderList/ServPhone}"
+                            wrapping="true"
+                        />
+                    </t:template>
+                </t:Column>
+                
+            </t:columns>
+        </t:Table>
+
+        <Panel
+            headerText="Service Request Details"
+            width="100%"
+        >
+            <content>
+                <HBox>
+                    <VBox>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="{i18n>lblSharpRequestID}"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/Order}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Description:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/Description}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Last Status:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/Status}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Sharp Equipment ID:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/EquipmentId}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Model:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/Model}"
+                            />
+                        </Toolbar>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Serial:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/Sernr}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Address:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/Street}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Contact Name:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/Terms}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Contract Terms:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/Terms}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Service Category:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/Terms}"
+                            />
+                        </Toolbar>
+                    </VBox>
+                    <VBox>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Date:"
+                                width="8rem"
+                            />
+                            <Text
+                                text="{modelServReq>/CreateDate}"
+                            />
+                        </Toolbar>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Request Reference:"
+                                width="8rem"
+                            />
+                            <Text
+                                text="{modelServReq>/Reference}"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Status Time:"
+                                width="8rem"
+                            />
+                            <Text
+                                text="{modelServReq>/StatusTs}"
+                            />
+                        </Toolbar>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Customer EquipId:"
+                                width="8rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/CustEquip}"
+                            />
+                        </Toolbar>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="{i18n>lblModelDescription}"
+                                width="8rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/Description}"
+                            />
+                        </Toolbar>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="{i18n>lblLocation}"
+                                width="8rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/Location}"
+                            />
+                        </Toolbar>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="{i18n>lblCityStateZip}"
+                                width="8rem"
+                            />
+                            <Text
+                                text="{
+                            parts: [
+                                {path:'/selectedEquipment/City'},
+                                {path:'/selectedEquipment/State'},
+                                {path:'/selectedEquipment/Zip'}
+                            ],
+                            formatter: '.formatter.cityStateZip'
+                        }"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Contact Number:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/Terms}"
+                            />
+                        </Toolbar>
+                        <Toolbar width="25rem">
+                            <Label
+                                text="XXXZZZ:"
+                                width="10rem"
+                                visible="false"
+                            />
+                        </Toolbar>
+
+                        <Toolbar width="25rem">
+                            <Label
+                                text="Service Item:"
+                                width="10rem"
+                            />
+                            <Text
+                                text="{modelServiceDetails>/Terms}"
+                            />
+                        </Toolbar>
+                    </VBox>
+                </HBox>
+
+                <!-- Additional Info / Request Notes as text areas -->
+                <l:Grid
+                    defaultSpan="L6 M6 S12"
+                    containerQuery="true"
+                    class="sapUiSmallMarginTop"
+                >
+                    <l:content>
+                        <VBox>
+                            <Label
+                                text="{i18n>lblAdditionalInfo}"
+                                class="spHeaderLabel"
+                            />
+                            <TextArea
+                                value="{modelServReq>/AdditionalInfo}"
+                                editable="false"
+                                rows="3"
+                                width="100%"
+                            />
+                        </VBox>
+                        <VBox>
+                            <Label
+                                text="{i18n>lblRequestNotes}"
+                                class="spHeaderLabel"
+                            />
+                            <TextArea
+                                value="{modelServReq>/RequestNotes}"
+                                editable="false"
+                                rows="3"
+                                width="100%"
+                            />
+                        </VBox>
+                    </l:content>
+                </l:Grid>
+
+                <!-- Status History -->
+                <Title
+                    text="{i18n>ttlStatusHistory}"
+                    level="H4"
+                    class="sapUiSmallMarginTop"
+                />
+
+                <t:Table
+                    id="idStatusHistoryTable"
+                    rows="{modelStatusHis>/StatusCollection}"
+                    selectionMode="None"
+                    xmlns:table="sap.ui.table"
+                    width="100%"
+                >
+                    <t:columns>
+                        <t:Column>
+                            <Label text="Status" />
+                            <t:template>
+                                <Text text="{modelStatusHis>MobileStatus}" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column>
+                            <Label text="Time" />
+                            <t:template>
+                                <Text text="{modelStatusHis>StatusTs}" />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column>
+                            <Label text="Active" />
+                            <t:template>
+                                <Text
+                                    text="{= ${modelStatusHis>FlagActive} ? 'Yes' : 'No' }"
+                                />
+                            </t:template>
+                        </t:Column>
+
+                        <t:Column>
+                            <Label text="Technician" />
+                            <t:template>
+                                <Text text="{modelStatusHis>CreatedBy}" />
+                            </t:template>
+                        </t:Column>
+                    </t:columns>
+                </t:Table>
+            </content>
+        </Panel>
+    </Page>
+</mvc:View>

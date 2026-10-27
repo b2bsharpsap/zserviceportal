@@ -1,0 +1,413 @@
+<mvc:View
+    controllerName="zserviceportal.controller.EquipmentList"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:t="sap.ui.table"
+    xmlns:core="sap.ui.core"
+>
+    <!--        
+        Equipment List grid.
+        Uses sap.ui.table.Table because the requirements call for:
+          - per-column sort & filter
+          - configurable visibility
+          - export to Excel
+          - row multi-selection (checkbox)
+        sap.ui.table.Table exposes column header menus that ship with
+        these capabilities out of the box.
+    -->
+    <t:Table
+        id="tblEquipmentList"
+        rows="{modelEquipment>/EquipmentCollection}"
+        selectionMode="MultiToggle"
+        selectionBehavior="RowSelector"
+        enableColumnReordering="true"
+        enableColumnFreeze="true"
+        enableSelectAll="true"
+        rowSelectionChange=".onRowSelectionChange"
+        ariaLabelledBy="ttlEquipmentList"
+    >
+        <t:extension>
+            <OverflowToolbar id="otbEquipmentListToolbar">
+                <Title
+                    id="ttlEquipmentList"
+                    text="Equipment List"
+                    level="H4"
+                />
+                <ToolbarSpacer />
+
+                <!-- Free text search across the grid -->
+                <SearchField
+                    id="sfGridSearch"
+                    width="20rem"
+                    placeholder="{i18n>btnSearch}"
+                    search=".onSearch"
+                    liveChange=".onSearchLive"
+                />
+
+                <!-- Export to Excel -->
+
+                <Image
+                    press="onExportToExcel"
+                    src="images/icon_export_excel.png"
+                    tooltip="Export to Excel"
+                />
+                <!-- Configure columns to display or hide -->
+                <Image
+                    id="imgConfigureCols"
+                    press="onConfigureColumns"
+                    src="images/icon_settings.png"
+                    tooltip="Configure Columns"
+                />
+            </OverflowToolbar>
+        </t:extension>
+
+        <t:columns>
+            <!-- Equipment ID  (hyperlink) -->
+            <t:Column
+                id="colEquipmentId"
+                width="6rem"
+                sortProperty="ProductId"
+                filterProperty="ProductId"
+                autoResizable="true"
+                tooltip="Equipment ID"
+            >
+                <t:label>
+                    <Label text="Equipment ID" />
+                </t:label>
+                <!--
+                <t:template>
+                    <Text text="{modelEquipment>ProductId}" />                   
+                </t:template>
+                -->
+                <t:template>
+                    <Link
+                    text="{modelEquipment>ProductId}"
+                    press=".onEquipmentLinkPress" />
+                    </t:template>
+            </t:Column>
+
+
+            <!--    Customer Equipment Id-->
+
+            <t:Column
+                id="colCustEquip"
+                width="6rem"
+                sortProperty="CustEquip"
+                filterProperty="CustEquip"
+                autoResizable="true"
+                tooltip="Customer Equipment ID"
+            >
+                <t:label>
+                    <Label text="Customer Equip ID" />
+                </t:label>
+                <t:template>
+                    <Text
+                        text="{modelEquipment>CustEquip}"
+                        wrapping="true"
+                    />
+                </t:template>
+            </t:Column>           
+
+            <!-- Model -->
+            <t:Column
+                id="colModel"
+                width="6rem"
+                sortProperty="Model"
+                filterProperty="Model"
+                autoResizable="true"
+            >
+                <t:label>
+                    <Label text="Model" />
+                </t:label>
+                <t:template>
+                    <Text
+                        text="{modelEquipment>Model}"
+                        wrapping="false"
+                    />
+                </t:template>
+            </t:Column>
+
+            <!-- Serial Number -->
+            <t:Column
+                id="colSerialNumber"
+                width="8rem"
+                sortProperty="SerialNumber"
+                filterProperty="SerialNumber"
+                autoResizable="true"
+            >
+                <t:label>
+                    <Label text="Serial Number" />
+                </t:label>
+                <t:template>
+                    <Text text="{modelEquipment>SerialNumber}" />
+                </t:template>
+            </t:Column>
+
+            <!-- Serial -->
+            <!--
+            <t:Column id="colSerial" width="7rem"
+                      sortProperty="Serial" 
+                      filterProperty="Serial" 
+                      autoResizable="true">
+                <t:label><Label text="Status"/></t:label>
+                <t:template><Text text="{modelEquipment>ProductId}" wrapping="false"/></t:template>
+            </t:Column>
+            -->
+            <!-- Open Service Request  (hyperlink) -->
+            <t:Column
+                id="colOpenServiceRequest"
+                width="7rem"
+                sortProperty="SharpReqID"
+                filterProperty="SharpReqID"
+                autoResizable="true"
+                tooltip="Sharp Request ID"
+            >
+                <t:label>
+                    <Label text="Sharp Request ID" />
+                </t:label>
+                <t:template>
+                    <Text text="{modelEquipment>SharpReqID}" />
+                </t:template>
+            </t:Column>
+
+            <t:Column
+                id="colOpenServiceRequest112"
+                width="7rem"
+                sortProperty="ReqRef"
+                filterProperty="ReqRef"
+                autoResizable="true"
+                tooltip="Request Reference"
+            >
+                <t:label>
+                    <Label text="Request Reference" />
+                </t:label>
+                <t:template>
+                    <Text text="{modelEquipment>ReqRef}" />
+                </t:template>
+            </t:Column>
+
+            <!-- Open Service Request  (hyperlink) -->
+            <t:Column
+                id="colOpenServiceRequest1"
+                width="10rem"
+                sortProperty="Description"
+                filterProperty="Description"
+                autoResizable="true"
+            >
+                <t:label>
+                    <Label text="Description" />
+                </t:label>
+                <t:template>
+                    <Text text="{modelEquipment>Description}" />
+                </t:template>
+            </t:Column>
+
+      
+            <!-- Open Order  (hyperlink) -->
+            <t:Column
+                id="colOpenOrder"
+                width="7rem"
+                sortProperty="SharpOrderID"
+                filterProperty="SharpOrderID"
+                autoResizable="true"
+                tooltip="Last Sharp Order ID"
+            >
+                <t:label>
+                    <Label text="Last Sharp Order ID" />
+                </t:label>
+                <t:template>
+                    <Text text="{modelEquipment>SharpOrderID}" />
+                </t:template>
+            </t:Column>
+
+            <t:Column
+                id="colLocation"
+                width="5rem"
+                sortProperty="OrderRef"
+                filterProperty="OrderRef"
+                autoResizable="true"
+                tooltip="Last Order Reference"
+            >
+                <t:label>
+                    <Label text="Last Order Reference" />
+                </t:label>
+                <t:template>
+                    <Text
+                        text="{modelEquipment>OrderRef}"
+                        wrapping="true"
+                    />
+                </t:template>
+            </t:Column>
+
+            <t:Column
+                id="colLocation11"
+                width="5rem"
+                sortProperty="Location2"
+                filterProperty="Location2"
+                autoResizable="true"
+            >
+                <t:label>
+                    <Label text="Location" />
+                </t:label>
+                <t:template>
+                    <Text
+                        text="{modelEquipment>Location2}"
+                        wrapping="true"
+                    />
+                </t:template>
+            </t:Column>            
+            <t:Column
+                id="colStreet"
+                width="7rem"
+                sortProperty="Street"
+                filterProperty="Street"
+                autoResizable="true"
+            >
+                <t:label>
+                    <Label text="Street" />
+                </t:label>
+                <t:template>
+                    <Text text="{modelEquipment>Street}" />
+                </t:template>
+            </t:Column>
+
+            <t:Column
+                id="colTerms"
+                width="7rem"
+                sortProperty="City"
+                filterProperty="City"
+                autoResizable="true"
+            >
+                <t:label>
+                    <Label text="City" />
+                </t:label>
+                <t:template>
+                    <Text
+                        text="{modelEquipment>City}"
+                        wrapping="true"
+                    />
+                </t:template>
+            </t:Column>
+
+            <t:Column
+                id="colTerms112"
+                width="4rem"
+                sortProperty="Region"
+                filterProperty="Region"
+                autoResizable="true"
+            >
+                <t:label>
+                    <Label text="Region" />
+                </t:label>
+                <t:template>
+                    <Text
+                        text="{modelEquipment>Region}"
+                        wrapping="false"
+                    />
+                </t:template>
+            </t:Column>
+
+            <t:Column
+                id="colState"
+                width="5rem"
+                sortProperty="Terms"
+                filterProperty="Terms"
+                autoResizable="true"
+                tooltip="Contract Terms"
+            >
+                <t:label>
+                    <Label text="Contract Terms" />
+                </t:label>
+                <t:template>
+                    <Text text="{modelEquipment>Terms}" />
+                </t:template>
+            </t:Column>
+
+            <t:Column
+                id="colModelDescription"
+                width="7rem"
+                sortProperty="ModelDesc"
+                filterProperty="ModelDesc"
+                autoResizable="true"
+                tooltip="Model Description"
+            >
+                <t:label>
+                    <Label text="Model Description" />
+                </t:label>
+                <t:template>
+                    <Text text="{modelEquipment>ModelDesc}" />
+                </t:template>
+            </t:Column>
+
+            <t:Column
+                id="colTerms11"
+                width="7rem"
+                sortProperty="ContactName"
+                filterProperty="ContactName"
+                autoResizable="true"
+            >
+                <t:label>
+                    <Label text="Contact Name" />
+                </t:label>
+                <t:template>
+                    <Text
+                        text="{modelEquipment>ContactName}"
+                        wrapping="true"
+                    />
+                </t:template>
+            </t:Column>
+
+            <t:Column
+                id="colLocation112"
+                width="8rem"
+                sortProperty="Phone"
+                filterProperty="Phone"
+                autoResizable="true"
+                tooltip="Contact Number"
+            >
+                <t:label>
+                    <Label text="Contact Number" />
+                </t:label>
+                <t:template>
+                    <Text
+                        text="{modelEquipment>Phone}"
+                        wrapping="true"
+                    />
+                </t:template>
+            </t:Column>
+
+            <!-- No Access  (editable checkbox - flipped & later committed via
+                            Request Access / Remove Access buttons) -->
+
+            <!--               
+            <t:Column id="colNoAccess" width="6rem" hAlign="Center"
+                      sortProperty="NoAccess" filterProperty="NoAccess" autoResizable="true">
+                <t:label><Label text="{i18n>colNoAccess}"/></t:label>
+                <t:template>
+                    <CheckBox selected="{NoAccess}" editable="true"/>
+                </t:template>
+            </t:Column>
+                -->
+
+            <!-- Address  (hyperlink -> Google Maps URL built on the fly) -->
+            <!--
+            <t:Column id="colAddress" width="7rem"
+                      sortProperty="Address" filterProperty="Address" autoResizable="true">
+                <t:label><Label text="Phone"/></t:label>
+                <t:template>
+                    <Link text="{Address}"
+                          href="{
+                              parts: [
+                                  {path:'Address'},
+                                  {path:'City'},
+                                  {path:'State'}
+                              ],
+                              formatter: '.formatter.googleMapsUrl'
+                          }"
+                          target="_blank"/>
+                </t:template>
+            </t:Column>  
+            -->
+        </t:columns>
+    </t:Table>
+</mvc:View>

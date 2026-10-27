@@ -1,0 +1,185 @@
+{
+  "_version": "1.17.0",
+  "sap.app": {
+    "id": "ZSERVICEPORTAL",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "1.0.0"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.24.0",
+      "toolsId": "a0a12c7b-8000-4b27-8828-f6bc52210574"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/sap/opu/odata/sap/ZMOB_USER_PROFILE_SRV/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      },
+      "ZSDB2BSERVICE_Service": {
+        "uri": "/sap/opu/odata/SAP/ZSD_B2B_SERVICE_SRV/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "2.0"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.148.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "zserviceportal.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {}
+      },      
+      "modelB2BService": {
+        "dataSource": "ZSDB2BSERVICE_Service",
+        "settings": {
+          "defaultBindingMode": "TwoWay"
+        }
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/zsharpstyle.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "transition": "slide",
+        "type": "View",
+        "viewType": "XML",
+        "path": "zserviceportal.view",
+        "async": true,
+        "viewPath": "zserviceportal.view"
+      },
+      "routes": [
+        {
+          "name": "routeEquipmentListMain",
+          "pattern": ":?query:",
+          "target": [
+            "targetEquipmentListMain"
+          ]
+        },
+        {
+          "pattern": "routeServiceRequest",
+          "name": "routeServiceRequest",
+          "target": "targetServiceRequest"
+        },
+        {
+          "pattern": "routeServiceReqCreate",
+          "name":   "routeServiceReqCreate",
+          "target": "targetServiceReqCreate"
+        },
+        {
+          "pattern": "routeCreateOrder",
+          "name":   "routeCreateOrder",
+          "target": "targetCreateOrder"
+        },
+        {
+          "pattern": "routeServiceRequestAI",
+          "name": "routeServiceRequestAI",
+          "target": "targetServiceRequestAI"
+        },
+        {
+          "pattern": "routeConsOrderList",
+          "name": "routeConsOrderList",
+          "target": "targetConsOrderList"
+        },
+        {
+          "pattern": "routeMeterRead",
+          "name":   "routeMeterRead",
+          "target": "targetMeterRead"
+        }
+        
+      ],
+      "targets": {
+        "targetEquipmentListMain": {
+          "id": "EquipmentListMain",
+          "name": "EquipmentListMain"
+        },
+        "targetServiceRequest": {
+          "id": "ServiceRequest",
+          "name": "ServiceRequest"
+        },
+
+        "targetServiceReqCreate": {
+          "id": "ServiceReqCreate",
+          "name": "ServiceReqCreate"
+        },
+
+        "targetCreateOrder": {
+          "id": "ConsOrderCreate",
+          "name": "ConsOrderCreate"
+        },
+
+        "targetServiceRequestAI": {
+          "id": "ServiceRequestAI",
+          "name": "ServiceRequestAI"
+        },
+        "targetConsOrderList": {
+          "id": "ConsOrderList",
+          "name": "ConsOrderList"
+        },
+         "targetMeterRead": {
+          "id": "MeterRead",
+          "name": "MeterRead"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "zserviceportal.view.App",
+      "type": "XML",
+      "id": "App",
+      "async": true
+    }
+  }
+}
