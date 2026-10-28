@@ -92,7 +92,7 @@
                         width="8rem"
                     />
                     <Input
-                        id="inpEquipmentId1"
+                        id="inpServEquipmentId"
                         value="{/search/equipmentId}"
                         width="9rem"
                     />
@@ -107,7 +107,7 @@
                         width="8rem"
                     />
                     <Input
-                        id="inpCustomerEquipmentId12"
+                        id="inpSharpReqId"
                         value="{/search/customerEquipmentId}"
                         width="9rem"
                     />
@@ -139,7 +139,7 @@
                         text="Search"
                         visible="{= !${/selectedEquipment/NoAccess}}"
                         class="spOpenEquipmentBtn sapUiTinyMarginEnd"
-                        press=".getServiceRequestList"
+                        press=".searchServiceRequests"
                     />
                     <Input
                         id="inpCustomerEquipmentId1123"
@@ -159,7 +159,7 @@
                         width="8rem"
                     />
                     <Input
-                        id="inpCustomerEquipmentId1"
+                        id="inpCustEquipmentId"
                         value="{/search/customerEquipmentId}"
                         width="9rem"
                     />
@@ -174,7 +174,7 @@
                         width="8rem"
                     />
                     <Input
-                        id="inpModel1"
+                        id="inpServModel"
                         value="{/search/model}"
                         width="9rem"
                     />
@@ -188,7 +188,7 @@
                         width="8rem"
                     />
                     <Input
-                        id="inpSerial1"
+                        id="inpServSerial"
                         value="{/search/serial}"
                         width="9rem"
                     />
@@ -220,7 +220,7 @@
                     />
                    
                     <DatePicker
-                        id="idFromDate"
+                        id="idServFromDate"
                         placeholder="From Date"
                         change="handleFromDateChng"
                         width="8rem"
@@ -228,7 +228,7 @@
                         value=""
                     />                  
                     <DatePicker
-                        id="idToDate"
+                        id="idServToDate"
                         placeholder="To Date"
                         change="handleToDateChng"
                         width="8rem"
@@ -306,7 +306,7 @@
                 <!-- Customer Equipment ID  (hyperlink) -->
                 <t:Column
                     id="colCustomerEquipmentId1"
-                    width="5rem"
+                    width="6rem"
                     sortProperty="EtOrderList/CreateDate"
                     filterProperty="EtOrderList/CreateDate"
                     autoResizable="true"
@@ -352,7 +352,7 @@
                         <Label text="Request Reference" />
                     </t:label>
                     <t:template>
-                        <Text text="{modelServiceReq>EtOrderList/ExRef}" />
+                        <Text text="{modelServiceReq>EtOrderList/Exref}" />
                     </t:template>
                 </t:Column>
 
@@ -374,7 +374,7 @@
                 <!-- Open Order  (hyperlink) -->
                 <t:Column
                     id="colOpenOrder1"
-                    width="8rem"
+                    width="7rem"
                     sortProperty="EtOrderList/StatusDate"
                     filterProperty="EtOrderList/StatusDate"
                     autoResizable="true"
@@ -626,7 +626,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/EquipmentId}"
+                                text="{modelServReq>/Equipment}"
                             />
                         </Toolbar>
 
@@ -636,7 +636,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Model}"
+                                text="{modelServReq>/Model}"
                             />
                         </Toolbar>
                         <Toolbar width="25rem">
@@ -645,7 +645,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Sernr}"
+                                text="{modelServReq>/Serial}"
                             />
                         </Toolbar>
 
@@ -655,7 +655,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Street}"
+                                text="{modelServReq>/Street}"
                             />
                         </Toolbar>
 
@@ -675,7 +675,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Terms}"
+                                text="{modelServReq>/Terms}"
                             />
                         </Toolbar>
 

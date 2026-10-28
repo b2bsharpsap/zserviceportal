@@ -93,7 +93,7 @@
                         width="8rem"
                     />
                     <Input
-                        id="inpEquipmentId145"
+                        id="inpSharpOrder"
                         value="{/search/equipmentId}"
                         width="9rem"
                     />
@@ -107,7 +107,7 @@
                         width="8rem"
                     />
                     <Input
-                        id="inpCustomerEquipmentId134"
+                        id="inpSharpEquipId"
                         value="{/search/customerEquipmentId}"
                         width="9rem"
                     />
@@ -135,11 +135,11 @@
                     width="28rem"
                 >
                     <Button
-                        id="btnViewRequests1245"
+                        id="btnOrderSearch"
                         text="Search"
                         visible="{= !${/selectedEquipment/NoAccess}}"
                         class="spOpenEquipmentBtn sapUiTinyMarginEnd"
-                        press=".getServiceRequestList"
+                        press=".searchConsOrderList"
                     />
                     <Input
                         id="inpCustomerEquipmentId112334"
@@ -160,7 +160,7 @@
                         width="8rem"
                     />
                     <Input
-                        id="inpModel133"
+                        id="inpOrderModel"
                         value="{/search/model}"
                         width="9rem"
                     />
@@ -174,7 +174,7 @@
                         width="8rem"
                     />
                     <Input
-                        id="inpSerial144"
+                        id="inpOrderSerial"
                         value="{/search/serial}"
                         width="9rem"
                     />
@@ -189,7 +189,7 @@
                         width="8rem"
                     />
                     <Input
-                        id="inpSerial255"
+                        id="inpOrderRef"
                         value="{/search/serial}"
                         width="9rem"
                     />
@@ -220,7 +220,7 @@
                     />
                     
                     <DatePicker
-                        id="idFromDate44"
+                        id="idOrderFromDate"
                         placeholder="From Date"
                         change="handleFromDateChng"
                         width="8rem"
@@ -229,7 +229,7 @@
                     />
                    
                     <DatePicker
-                        id="idToDate33"
+                        id="idOrderToDate"
                         placeholder="To Date"
                         change="handleToDateChng"
                         width="8rem"
@@ -319,7 +319,7 @@
 
                 <!-- Customer Equipment ID  (hyperlink) -->
                 <t:Column
-                    width="8rem"
+                    width="7rem"
                     sortProperty="CreateDate"
                     filterProperty="CreateDate"
                     autoResizable="true"
@@ -368,7 +368,7 @@
                 
                 <!-- Open Service Request  (hyperlink) -->
                 <t:Column
-                    width="10rem"
+                    width="7rem"
                     sortProperty="EtOrderList/Status"
                     filterProperty="EtOrderList/Status"
                     autoResizable="true"
@@ -383,7 +383,7 @@
 
                 <!-- Open Service Request  (hyperlink) -->
                 <t:Column
-                    width="10rem"
+                    width="7rem"
                     sortProperty="EtOrderList/StatusDate"
                     filterProperty="EtOrderList/StatusDate"
                     autoResizable="true"
@@ -465,7 +465,7 @@
                 </t:Column>
 
                 <t:Column
-                    width="7rem"
+                    width="8rem"
                     sortProperty="EtOrderList/Sernr"
                     filterProperty="EtOrderList/Sernr"
                     autoResizable="true"
@@ -539,7 +539,7 @@
                     autoResizable="true"
                 >
                     <t:label>
-                        <Label text="State" />
+                        <Label text="Region" />
                     </t:label>
                     <t:template>
                         <Text
@@ -547,8 +547,7 @@
                             wrapping="false"
                         />
                     </t:template>
-                </t:Column>
-                   
+                </t:Column>                  
                
             </t:columns>
         </t:Table>

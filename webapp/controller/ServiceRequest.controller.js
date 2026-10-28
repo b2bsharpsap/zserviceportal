@@ -96,8 +96,8 @@ sap.ui.define([
             //DO not delete
             //var sServiceRequest = "";
 
-            var oModel = this.getView().getModel("modelB2BService");
-            var sPath = "/SrvOrderListSet";
+            //var oModel = this.getView().getModel("modelB2BService");
+            //var sPath = "/SrvOrderListSet";
             var aFilters = [];
 
             var oGlobalModel =
@@ -119,11 +119,8 @@ sap.ui.define([
             aFilters = [
                 new sap.ui.model.Filter("IvSoldTo", sap.ui.model.FilterOperator.EQ, this.customerId),
                 new sap.ui.model.Filter("IvUser", sap.ui.model.FilterOperator.EQ, this.SAPEPUser),
-                new sap.ui.model.Filter("IvOpen", sap.ui.model.FilterOperator.EQ, "O"),
-                /*
-                //new sap.ui.model.Filter("IvFromDate", sap.ui.model.FilterOperator.EQ, "20230101"),
-                //new sap.ui.model.Filter("IvToDate", sap.ui.model.FilterOperator.EQ, "20230201")
-                */
+                new sap.ui.model.Filter("IvOpen", sap.ui.model.FilterOperator.EQ, "O")
+
             ];
 
             if (aEqFilters.length > 0) {
@@ -134,6 +131,9 @@ sap.ui.define([
                     }))
             }
 
+            this._loadServiceRequestsList(aFilters);
+
+            /*
             sap.ui.core.BusyIndicator.show();
             var that = this;
             console.log("Filter Info :", aFilters);
@@ -152,7 +152,7 @@ sap.ui.define([
 
                     let intLength = oData.results.length;
                     let strTabHeader = "Service Request List (" + intLength + ")";
-					that.getView().byId("ttlSerReqList").setText(strTabHeader);	
+                    that.getView().byId("ttlSerReqList").setText(strTabHeader);	
 
                     that.getView().setModel(oSrvModel, "modelServiceReq");
                     // Optional: Refresh table binding
@@ -170,50 +170,184 @@ sap.ui.define([
 
                 }
             });
+            */
+
+
         },
 
-        //Start Excel Functionality %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
-        
-        /*
-        onExportToExcelZZZ: function () {
+        searchServiceRequests: function () {
 
-            //SHAIKD New Method - 23Oct2026
-            debugger;
+            //DO not delete
+            //var sServiceRequest = "";
 
-            //var sMsg = MyUtilityModule.myUtilityFunction("Welcome to Utility -->>  Invoice List")
-            //console.log("Return : -> ", sMsg);
+            //var oModel = this.getView().getModel("modelB2BService");
+            //var sPath = "/SrvOrderListSet";
+            var aFilters = [];
 
-            //var blnExcelNOData = false;
-            var flagExcelData = false;
-            var that = this;
-            debugger;
+            let sEquipmentId = this.byId("inpServEquipmentId").getValue();
+            let sCustEquipId = this.byId("inpCustEquipmentId").getValue();
+            let sModel = this.byId("inpServModel").getValue();
+            let sSerial = this.byId("inpServSerial").getValue();
 
-            var arrColumns = ["Order", "CreateDate", "Description",
-                "ExRef", "Status", "StatusDate", "EquipmentId",
-                "CustEquip"
+            let sSharpReqId = this.byId("inpSharpReqId").getValue();
+
+
+            let sFromDate = this.byId("idServFromDate").getValue();
+            let sToDate = this.byId("idServToDate").getValue();
+
+            console.log("Service  -  sFromDate : " + sFromDate);
+            console.log("Service  -  sToDate : " + sToDate);
+            //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
+            aFilters = [
+                new sap.ui.model.Filter("IvSoldTo", sap.ui.model.FilterOperator.EQ, this.customerId),
+                new sap.ui.model.Filter("IvUser", sap.ui.model.FilterOperator.EQ, this.SAPEPUser),
+                new sap.ui.model.Filter("IvOpen", sap.ui.model.FilterOperator.EQ, "O"),
+
+                new sap.ui.model.Filter("IvOrder", sap.ui.model.FilterOperator.EQ, sSharpReqId),
+
+                new sap.ui.model.Filter("IvEqId", sap.ui.model.FilterOperator.EQ, sEquipmentId),
+                new sap.ui.model.Filter("IvCustEq", sap.ui.model.FilterOperator.EQ, sCustEquipId),
+                new sap.ui.model.Filter("IvModel", sap.ui.model.FilterOperator.EQ, sModel),
+                new sap.ui.model.Filter("IvSerial", sap.ui.model.FilterOperator.EQ, sSerial),
+
+                new sap.ui.model.Filter("IvFromDate", sap.ui.model.FilterOperator.EQ, sFromDate),
+                new sap.ui.model.Filter("IvToDate", sap.ui.model.FilterOperator.EQ, sToDate)
+
+                //new sap.ui.model.Filter("IvFromDate", sap.ui.model.FilterOperator.EQ, "20230101"),
+                //new sap.ui.model.Filter("IvToDate", sap.ui.model.FilterOperator.EQ, "20230201")
+
             ];
 
-            var modelExcel = that.getView().getModel("modelServiceReq");
-            if (modelExcel) {
-                debugger;
+            /*
 
-                //var excelData = modelExcel.getData().EquipmentCollection;
+            if (aEqFilters.length > 0) {
+                aFilters.push(
+                    new sap.ui.model.Filter({
+                        filters: aEqFilters,
+                        and: false
+                    }))
+            }
+            */
 
-                var excelData = modelExcel.getData();
-                var modLength = excelData.length;
-                if (modLength > 0) {
-                    MyUtilityModule.generateExcelReport(arrColumns, excelData, "ServiceList");
-                    flagExcelData = true;
+            this._loadServiceRequestsList(aFilters);
+
+
+            /*
+            sap.ui.core.BusyIndicator.show();
+            var that = this;
+            console.log("Filter Info :", aFilters);
+            debugger;
+            oModel.read(sPath, {
+                filters: aFilters,
+                success: function (oData) {
+                    console.log(" SrvOrderListSet  Success:", oData);
+                    sap.ui.core.BusyIndicator.hide();
+                    debugger;
+                    var arrServiceReq = [];
+
+                    var oSrvModel = new sap.ui.model.json.JSONModel({
+                        results: oData.results
+                    });
+
+                    let intLength = oData.results.length;
+                    let strTabHeader = "Service Request List (" + intLength + ")";
+                    that.getView().byId("ttlSerReqList").setText(strTabHeader);	
+
+                    that.getView().setModel(oSrvModel, "modelServiceReq");
+                    // Optional: Refresh table binding
+                    that.byId("idTblServiceRequest").getBinding("items")?.refresh();
+                },
+                error: function (oError) {
+
+                    let oSrvModel = new sap.ui.model.json.JSONModel();
+                    that.getView().setModel(oSrvModel, "modelServiceReq");
+                    // Optional: Refresh table binding
+                    that.byId("idTblServiceRequest").getBinding("items")?.refresh();
+
+                    sap.ui.core.BusyIndicator.hide();
+                    console.error("Error:", oError);
 
                 }
-            }
-
-            if (!flagExcelData) {
-                MessageBox.error("Excel export is not possible because no data to export.");
-            }
+            });
+            */
 
         },
-        */
+
+
+        _loadServiceRequestsList: function (aFilters) {
+
+            //DO not delete
+            //var sServiceRequest = "";
+
+            var oModel = this.getView().getModel("modelB2BService");
+            var sPath = "/SrvOrderListSet";
+
+            /*
+            let sEquipmentId = this.byId("inpServEquipmentId").getValue();
+            let sCustEquipId = this.byId("inpCustEquipmentId").getValue();
+            let sModel = this.byId("inpServModel").getValue();
+            let sSerial = this.byId("inpServSerial").getValue();
+
+            let sSharpReqId = this.byId("inpSharpReqId").getValue();
+
+            console.log("Service  -  this.customerId : " + this.customerId);
+
+              var aFiltersXX = [];  
+            //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
+            aFiltersXX = [
+                new sap.ui.model.Filter("IvSoldTo", sap.ui.model.FilterOperator.EQ, this.customerId),
+                new sap.ui.model.Filter("IvUser", sap.ui.model.FilterOperator.EQ, this.SAPEPUser),
+                new sap.ui.model.Filter("IvOpen", sap.ui.model.FilterOperator.EQ, "O"),
+
+                new sap.ui.model.Filter("IvOrder", sap.ui.model.FilterOperator.EQ, sSharpReqId),
+
+                new sap.ui.model.Filter("IvEqId", sap.ui.model.FilterOperator.EQ, sEquipmentId),
+                new sap.ui.model.Filter("IvCustEq", sap.ui.model.FilterOperator.EQ, sCustEquipId),
+                new sap.ui.model.Filter("IvModel", sap.ui.model.FilterOperator.EQ, sModel),
+                new sap.ui.model.Filter("IvSerial", sap.ui.model.FilterOperator.EQ, sSerial)
+               
+            ];
+           
+            */
+            sap.ui.core.BusyIndicator.show();
+            var that = this;
+            console.log("Filter Info :", aFilters);
+            debugger;
+            oModel.read(sPath, {
+                filters: aFilters,
+                success: function (oData) {
+                    console.log(" SrvOrderListSet  Success:", oData);
+                    sap.ui.core.BusyIndicator.hide();
+                    debugger;
+                    var arrServiceReq = [];
+
+                    var oSrvModel = new sap.ui.model.json.JSONModel({
+                        results: oData.results
+                    });
+
+                    let intLength = oData.results.length;
+                    let strTabHeader = "Service Request List (" + intLength + ")";
+                    that.getView().byId("ttlSerReqList").setText(strTabHeader);
+
+                    that.getView().setModel(oSrvModel, "modelServiceReq");
+                    // Optional: Refresh table binding
+                    that.byId("idTblServiceRequest").getBinding("items")?.refresh();
+                },
+                error: function (oError) {
+
+                    let oSrvModel = new sap.ui.model.json.JSONModel();
+                    that.getView().setModel(oSrvModel, "modelServiceReq");
+                    // Optional: Refresh table binding
+                    that.byId("idTblServiceRequest").getBinding("items")?.refresh();
+
+                    sap.ui.core.BusyIndicator.hide();
+                    console.error("Error:", oError);
+
+                }
+            });
+
+        },
+        //Start Excel Functionality %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 
         onExportToExcel: function () {
 
@@ -410,6 +544,14 @@ sap.ui.define([
                         that.getView().setModel(modelStatusInfo, "modelStatusHis");
 
                         if (oData.results && oData.results.length > 0) {
+
+                            //*************************************** */
+                            const oOrderInfo = oData.results[0].EsOrderInfo;
+                            const oModelServReq = new sap.ui.model.json.JSONModel(oOrderInfo);
+                            that.getView().setModel(oModelServReq, "modelServReq");
+
+                            //***************************************** */
+                            /*
                             var modelServReq = new sap.ui.model.json.JSONModel(
                                 {
                                     Status: oData.results[0].EsOrderInfo.Status,
@@ -421,6 +563,7 @@ sap.ui.define([
                                 }
                             );
                             that.getView().setModel(modelServReq, "modelServReq");
+                            */
                         }
 
                     }

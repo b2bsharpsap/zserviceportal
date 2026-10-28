@@ -98,8 +98,7 @@ sap.ui.define([
 
             //var sServiceRequest = "";
 
-            var oModel = this.getView().getModel("modelB2BService");
-            var sPath = "/ConsOrderListSet";
+
             var aFilters = [];
 
             var oGlobalModel =
@@ -136,6 +135,9 @@ sap.ui.define([
                     }))
             }
 
+
+            this._loadConsOrderList(aFilters);
+            /*
             sap.ui.core.BusyIndicator.show();
             var that = this;
             console.log("Filter Info :", aFilters);
@@ -155,7 +157,7 @@ sap.ui.define([
 
                     let intLength = oData.results.length;
                     let strTabHeader = "Consumable Orders List (" + intLength + ")";
-					that.getView().byId("ttlConsOrdersList").setText(strTabHeader);	
+                    that.getView().byId("ttlConsOrdersList").setText(strTabHeader);	
 
                     that.getView().setModel(oSrvModel, "modelServiceReq");
                     // Optional: Refresh table binding
@@ -172,6 +174,105 @@ sap.ui.define([
                     console.error("Error:", oError);
                 }
             });
+
+            */
+
+
+        },
+
+
+        searchConsOrderList: function () {
+
+            //DO not delete
+            //var sServiceRequest = "";
+
+            //var oModel = this.getView().getModel("modelB2BService");
+            //var sPath = "/SrvOrderListSet";
+            var aFilters = [];
+
+            let sEquipmentId = this.byId("inpSharpEquipId").getValue();
+            let sOrderRefer = this.byId("inpOrderRef").getValue();
+            let sModel = this.byId("inpOrderModel").getValue();
+            let sSerial = this.byId("inpOrderSerial").getValue();
+
+            let sSharpReqId = this.byId("inpSharpOrder").getValue();
+
+
+            let sFromDate = this.byId("idOrderFromDate").getValue();
+            let sToDate = this.byId("idOrderToDate").getValue();
+
+            console.log("Order  -  sFromDate : " + sFromDate);
+            console.log("Order  -  sToDate : " + sToDate);
+            //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
+            aFilters = [
+                new sap.ui.model.Filter("IvSoldTo", sap.ui.model.FilterOperator.EQ, this.customerId),
+                new sap.ui.model.Filter("IvUser", sap.ui.model.FilterOperator.EQ, this.SAPEPUser),
+                new sap.ui.model.Filter("IvOpen", sap.ui.model.FilterOperator.EQ, "O"),
+
+                new sap.ui.model.Filter("IvOrder", sap.ui.model.FilterOperator.EQ, sSharpReqId),
+
+                new sap.ui.model.Filter("IvEqId", sap.ui.model.FilterOperator.EQ, sEquipmentId),
+                new sap.ui.model.Filter("IvReferance", sap.ui.model.FilterOperator.EQ, sOrderRefer),
+                new sap.ui.model.Filter("IvModel", sap.ui.model.FilterOperator.EQ, sModel),
+                new sap.ui.model.Filter("IvSerial", sap.ui.model.FilterOperator.EQ, sSerial),
+
+                new sap.ui.model.Filter("IvFromDate", sap.ui.model.FilterOperator.EQ, sFromDate),
+                new sap.ui.model.Filter("IvToDate", sap.ui.model.FilterOperator.EQ, sToDate)
+
+                //new sap.ui.model.Filter("IvFromDate", sap.ui.model.FilterOperator.EQ, "20230101"),
+                //new sap.ui.model.Filter("IvToDate", sap.ui.model.FilterOperator.EQ, "20230201")
+
+            ];
+
+
+              this._loadConsOrderList(aFilters);
+
+        },
+
+        _loadConsOrderList: function (aFilters) {
+
+            var oDataService = this.getView().getModel("modelB2BService");
+            var sPath = "/ConsOrderListSet";
+
+            sap.ui.core.BusyIndicator.show();
+            var that = this;
+            console.log("Filter Info :", aFilters);
+            debugger;
+            oDataService.read(sPath, {
+                filters: aFilters,
+                success: function (oData) {
+                    console.log(" ConsOrderListSet  Success:", oData);
+                    sap.ui.core.BusyIndicator.hide();
+                    debugger;
+                    //var arrServiceReq = [];
+
+                    var oSrvModel = new sap.ui.model.json.JSONModel({
+                        results: oData.results
+                    });
+
+
+                    let intLength = oData.results.length;
+                    let strTabHeader = "Consumable Orders List (" + intLength + ")";
+                    that.getView().byId("ttlConsOrdersList").setText(strTabHeader);
+
+                    that.getView().setModel(oSrvModel, "modelServiceReq");
+                    // Optional: Refresh table binding
+                    that.byId("tblConsOrdersList").getBinding("items")?.refresh();
+                },
+                error: function (oError) {
+
+                    let oSrvModel = new sap.ui.model.json.JSONModel();
+                    that.getView().setModel(oSrvModel, "modelServiceReq");
+                    // Optional: Refresh table binding
+                    that.byId("tblConsOrdersList").getBinding("items")?.refresh();
+
+                    sap.ui.core.BusyIndicator.hide();
+                    console.error("Error:", oError);
+                }
+            });
+
+
+
         },
 
         //Start - Excel Export &&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
@@ -340,11 +441,7 @@ sap.ui.define([
             this.getView().byId("inpCustomer").setValue(oEvent.getParameters().selectedItem.getKey());
             //oView.byId("dealername").setText(oEvent.getParameters().selectedItem.getText());
         },
-        /*
-        getRouter: function () {
-            return UIComponent.getRouterFor(this);
-        },
-        */
+
         onViewRequests: function () {
             console.log("NavTo Inventory Inquiry Page");
 
