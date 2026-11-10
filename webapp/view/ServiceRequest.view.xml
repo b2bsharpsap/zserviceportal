@@ -42,6 +42,7 @@
                     />
                     -->
                     <Button
+                        id ="btnServBackButton"
                         text="Back"
                         type="Transparent"
                         press="onPressBackButton"
@@ -135,7 +136,7 @@
                     width="28rem"
                 >
                     <Button
-                        id="btnViewRequests12"
+                        id="btnServiceSearch"
                         text="Search"
                         visible="{= !${/selectedEquipment/NoAccess}}"
                         class="spOpenEquipmentBtn sapUiTinyMarginEnd"
@@ -207,9 +208,7 @@
                         value="{/search/serial}"
                         width="9rem"
                     />
-                </Toolbar>  
-
-                            
+                </Toolbar>                              
                 <Toolbar
                     class="sapUiTinyMarginTop "
                     width="100%"
@@ -442,7 +441,7 @@
                 </t:Column>
 
                 <t:Column
-                    width="7rem"
+                    width="9rem"
                     sortProperty="EtOrderList/Sernr"
                     filterProperty="EtOrderList/Sernr"
                     autoResizable="true"
@@ -493,7 +492,7 @@
                 </t:Column>
 
                 <t:Column
-                    width="7rem"
+                    width="9rem"
                     sortProperty="EtOrderList/City1"
                     filterProperty="EtOrderList/City1"
                     autoResizable="true"
@@ -529,8 +528,8 @@
                
                 <t:Column
                     width="7rem"
-                    sortProperty="EtOrderList/Description"
-                    filterProperty="EtOrderList/Description"
+                    sortProperty="EtOrderList/ModelDesc"
+                    filterProperty="EtOrderList/ModelDesc"
                     autoResizable="true"
                     tooltip="Model Description"
                 >
@@ -539,14 +538,14 @@
                     </t:label>
                     <t:template>
                         <Text
-                            text="{modelServiceReq>EtOrderList/Description}"
+                            text="{modelServiceReq>EtOrderList/ModelDesc}"
                             wrapping="true"
                         />
                     </t:template>
                 </t:Column>
 
                 <t:Column
-                    width="7rem"
+                    width="10rem"
                     sortProperty="EtOrderList/ServContact"
                     filterProperty="EtOrderList/ServContact"
                     autoResizable="true"
@@ -582,7 +581,6 @@
                 
             </t:columns>
         </t:Table>
-
         <Panel
             headerText="Service Request Details"
             width="100%"
@@ -596,7 +594,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Order}"
+                                text="{modelServReq>/Order}"
                             />
                         </Toolbar>
 
@@ -606,7 +604,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Description}"
+                                text="{modelServReq>/Description}"
                             />
                         </Toolbar>
 
@@ -616,7 +614,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Status}"
+                                text="{modelServReq>/Status}"
                             />
                         </Toolbar>
 
@@ -665,7 +663,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Terms}"
+                                text="{modelServReq>/ContName}"
                             />
                         </Toolbar>
 
@@ -685,7 +683,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Terms}"
+                                text="{modelServReq>/ServiceCategory}"
                             />
                         </Toolbar>
                     </VBox>
@@ -705,7 +703,7 @@
                                 width="8rem"
                             />
                             <Text
-                                text="{modelServReq>/Reference}"
+                                text="{modelServReq>/Referance}"
                             />
                         </Toolbar>
 
@@ -724,7 +722,7 @@
                                 width="8rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/CustEquip}"
+                                text="{modelServReq>/CustEquip}"
                             />
                         </Toolbar>
                         <Toolbar width="25rem">
@@ -733,7 +731,7 @@
                                 width="8rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Description}"
+                                text="{modelServReq>/Description}"
                             />
                         </Toolbar>
                         <Toolbar width="25rem">
@@ -742,7 +740,7 @@
                                 width="8rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Location}"
+                                text="{modelServReq>/Location2}"
                             />
                         </Toolbar>
                         <Toolbar width="25rem">
@@ -768,7 +766,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Terms}"
+                                text="{modelServReq>/ContPhone}"
                             />
                         </Toolbar>
                         <Toolbar width="25rem">
@@ -785,7 +783,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Terms}"
+                                text="{modelServReq>/ServiceItem}"
                             />
                         </Toolbar>
                     </VBox>

@@ -311,9 +311,7 @@
                         <Link
                         text="{modelServiceReq>EtOrderList/Order}"
                         press=".onSharpOrderPress" />
-                        </t:template>       
-
-
+                        </t:template>     
 
                 </t:Column>
 
@@ -334,7 +332,7 @@
 
                 <!-- Model -->
                 <t:Column
-                    width="7rem"
+                    width="9rem"
                     sortProperty="EtOrderList/Description"
                     filterProperty="EtOrderList/Description"
                     autoResizable="true"
@@ -499,7 +497,7 @@
                 </t:Column>
 
                 <t:Column
-                    width="7rem"
+                    width="9rem"
                     sortProperty="EtOrderList/Street"
                     filterProperty="EtOrderList/Street"
                     autoResizable="true"
@@ -565,7 +563,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Order}"
+                                text="{modelOrderDetails>/Order}"
                             />
                         </Toolbar>
 
@@ -575,7 +573,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Description}"
+                                text="{modelOrderDetails>/Description}"
                             />
                         </Toolbar>
 
@@ -585,7 +583,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Status}"
+                                text="{modelOrderDetails>/Status}"
                             />
                         </Toolbar>
 
@@ -595,7 +593,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/EquipmentId}"
+                                text="{modelOrderDetails>/Equipment}"
                             />
                         </Toolbar>
 
@@ -605,7 +603,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Model}"
+                                text="{modelOrderDetails>/Model}"
                             />
                         </Toolbar>
                         <Toolbar width="25rem">
@@ -614,7 +612,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Sernr}"
+                                text="{modelOrderDetails>/Serial}"
                             />
                         </Toolbar>
 
@@ -624,7 +622,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Street}"
+                                text="{modelOrderDetails>/Street}"
                             />
                         </Toolbar>
                        
@@ -634,7 +632,7 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Terms}"
+                                text="{modelOrderDetails>/Terms}"
                             />
                         </Toolbar>
 
@@ -647,7 +645,7 @@
                                 width="8rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Date}"
+                                text="{modelOrderDetails>/CreateDate}"
                             />
                         </Toolbar>
                         <Toolbar width="25rem">
@@ -656,7 +654,7 @@
                                 width="8rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Description1}"
+                                text="{modelOrderDetails>/Referance}"
                             />
                         </Toolbar>
 
@@ -666,7 +664,7 @@
                                 width="8rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Description1}"
+                                text="{modelOrderDetails>/StatusTs}"
                             />
                         </Toolbar>
                         <Toolbar width="25rem">
@@ -675,7 +673,7 @@
                                 width="8rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/CustEquip}"
+                                text="{modelOrderDetails>/CustEquip}"
                             />
                         </Toolbar>
                         <Toolbar width="25rem">
@@ -684,7 +682,7 @@
                                 width="8rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Description}"
+                                text="{modelOrderDetails>/ModelDesc}"
                             />
                         </Toolbar>
                         <Toolbar width="25rem">
@@ -693,7 +691,7 @@
                                 width="8rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Location2}"
+                                text="{modelOrderDetails>/Location}"
                             />
                         </Toolbar>
                         <Toolbar width="25rem">
@@ -719,11 +717,9 @@
                                 width="10rem"
                             />
                             <Text
-                                text="{modelServiceDetails>/Terms}"
+                                text="{modelOrderDetails>/Status}"
                             />
-                        </Toolbar>
-
-                        
+                        </Toolbar>                       
                     </VBox>
                 </HBox>
 
@@ -774,7 +770,7 @@
                            class="spHeaderLabel"
                     />
                     <TextArea
-                        value="{/order/ShippingInstructions}"
+                        value="{modelOrderDetails>/ShipInstructions}"
                         editable="false"
                         rows="3"
                         width="100%"

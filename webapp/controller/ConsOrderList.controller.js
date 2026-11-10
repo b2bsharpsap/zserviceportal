@@ -24,7 +24,7 @@ sap.ui.define([
 
             var oTable1 = this.getView().byId("tblConsOrdersList");
             oTable1.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
-            oTable1.setVisibleRowCount(10);
+            oTable1.setVisibleRowCount(3);
 
             var oTable2 = this.getView().byId("tblProduct");
             oTable2.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
@@ -135,48 +135,8 @@ sap.ui.define([
                     }))
             }
 
-
+            this._clearModels();
             this._loadConsOrderList(aFilters);
-            /*
-            sap.ui.core.BusyIndicator.show();
-            var that = this;
-            console.log("Filter Info :", aFilters);
-            debugger;
-            oModel.read(sPath, {
-                filters: aFilters,
-                success: function (oData) {
-                    console.log(" SrvOrderListSet  Success:", oData);
-                    sap.ui.core.BusyIndicator.hide();
-                    debugger;
-                    //var arrServiceReq = [];
-
-                    var oSrvModel = new sap.ui.model.json.JSONModel({
-                        results: oData.results
-                    });
-
-
-                    let intLength = oData.results.length;
-                    let strTabHeader = "Consumable Orders List (" + intLength + ")";
-                    that.getView().byId("ttlConsOrdersList").setText(strTabHeader);	
-
-                    that.getView().setModel(oSrvModel, "modelServiceReq");
-                    // Optional: Refresh table binding
-                    that.byId("tblConsOrdersList").getBinding("items")?.refresh();
-                },
-                error: function (oError) {
-
-                    let oSrvModel = new sap.ui.model.json.JSONModel();
-                    that.getView().setModel(oSrvModel, "modelServiceReq");
-                    // Optional: Refresh table binding
-                    that.byId("tblConsOrdersList").getBinding("items")?.refresh();
-
-                    sap.ui.core.BusyIndicator.hide();
-                    console.error("Error:", oError);
-                }
-            });
-
-            */
-
 
         },
 
@@ -186,8 +146,6 @@ sap.ui.define([
             //DO not delete
             //var sServiceRequest = "";
 
-            //var oModel = this.getView().getModel("modelB2BService");
-            //var sPath = "/SrvOrderListSet";
             var aFilters = [];
 
             let sEquipmentId = this.byId("inpSharpEquipId").getValue();
@@ -224,11 +182,32 @@ sap.ui.define([
 
             ];
 
-
-              this._loadConsOrderList(aFilters);
+            this._clearModels();
+            this._loadConsOrderList(aFilters);
 
         },
 
+        _clearModels: function () {
+
+            //Clear /Empty Models
+
+            var oServDetailsModel = this.getView().getModel("modelServiceDetails");
+            if (oServDetailsModel) {
+                oServDetailsModel.setData({});
+            }
+
+            var oServReqModel = this.getView().getModel("modelServiceReq");
+            if (oServReqModel) {
+                oServReqModel.setData({});
+            }
+
+            var oPartsModel = this.getView().getModel("modelOrderParts");
+            if (oPartsModel) {
+                oPartsModel.setData({
+                    PartsCollection: []
+                });
+            }
+        },
         _loadConsOrderList: function (aFilters) {
 
             var oDataService = this.getView().getModel("modelB2BService");
@@ -270,9 +249,6 @@ sap.ui.define([
                     console.error("Error:", oError);
                 }
             });
-
-
-
         },
 
         //Start - Excel Export &&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
@@ -364,6 +340,7 @@ sap.ui.define([
 
             // Display details section
             this.getOrderDetails(sOrderNo);
+            this.getShipInstructions(sOrderNo);
 
             // Populate Order Details panel
             var oDetailModel = new sap.ui.model.json.JSONModel(
@@ -393,13 +370,48 @@ sap.ui.define([
             oModel.read(sPath, {
                 filters: aFilters,
                 success: function (oData) {
-                    console.log("Success:", oData);
+                    console.log("Success  /ConsOrderDetailSet  :", oData);
                     debugger;
 
                     if (oData.results) {
                         oModelEquipDetails.setProperty("/orderDetails", oData.results[0].EtItems);
                         that.getOwnerComponent().setModel(oModelEquipDetails, "modelEquipDetails");
 
+
+                        //**********START ^^^^^^^^^^^^^ *//
+
+                        if (oData.results && oData.results.length > 0) {
+
+                            //*************************************** */
+                            const oOrderInfo = oData.results[0].EsOrderInfo;
+                            const oModelOrderInfo = new sap.ui.model.json.JSONModel(oOrderInfo);
+
+
+                            oModelOrderInfo.setProperty("/ContName", oData.results[0].EvContactName);
+                            oModelOrderInfo.setProperty("/ContPhone", oData.results[0].EvContactPhone);
+
+                            oModelOrderInfo.setProperty("/ServiceCategory", oData.results[0].EvCategory1);
+                            oModelOrderInfo.setProperty("/ServiceItem", oData.results[0].EvCategory2);
+
+
+                            that.getView().setModel(oModelOrderInfo, "modelOrderDetails");
+
+                            //***************************************** */
+                            /*
+                            var modelServReq = new sap.ui.model.json.JSONModel(
+                                {
+                                    Status: oData.results[0].EsOrderInfo.Status,
+                                    StatusTs: oData.results[0].EsOrderInfo.StatusTs,
+
+                                    CreateDate: oData.results[0].EsOrderInfo.CreateDate,
+                                    Reference: oData.results[0].EsOrderInfo.Reference
+
+                                }
+                            );
+                            that.getView().setModel(modelServReq, "modelServReq");
+                            */
+                        }
+                        //########  END END #################//
                         var arrPartsInfo = [];
                         if (oData.results.length > 0) {
 
@@ -415,16 +427,7 @@ sap.ui.define([
                         }
                         var modelPartsInfo = new JSONModel({ "PartsCollection": arrPartsInfo });
                         that.getView().setModel(modelPartsInfo, "modelOrderParts");
-                        /*
-                        Verify and remove code.
-                        var modelDetails = new sap.ui.model.json.JSONModel(
-                            {
-                                Status: oData.results[0].EsOrderInfo.Status,
-                                StatusTs: oData.results[0].EsOrderInfo.StatusTs
-                            }
-                        );
-                        that.getOwnerComponent().setModel(modelDetails, "modelOrder");
-                        */
+
                     }
                 },
                 error: function (oError) {
@@ -433,6 +436,59 @@ sap.ui.define([
             });
 
         },
+
+
+        //Start..  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
+
+        getShipInstructions: function (sSharpOrderID) {
+
+            var oModel = this.getView().getModel("modelB2BService");
+            var sPath = "/ConsOrderTextSet";
+            var sUserId = this.SAPEPUser; // Use the SAP EP user ID obtained from getSAPEPUserDetails
+
+            console.log("Shippinh Instructions Order ID >>>  " + sSharpOrderID);
+
+            var aFilters = [
+                new sap.ui.model.Filter("IvOrder", sap.ui.model.FilterOperator.EQ, sSharpOrderID)
+            ];
+
+            var that = this;
+
+            oModel.read(sPath, {
+                filters: aFilters,
+                success: function (oData) {
+                    debugger;
+                    console.log(" /ConsOrderTextSet Success:", oData);
+
+                    let sShipInst = "";
+                    //let sRequestNotes = "";
+
+                    if (oData.results[0]) {
+                        var intLength = oData.results.length;
+
+                        for (var i = 0; i < intLength; i++)
+
+                            if (oData.results[i].EtText.Tdid === "SHIP") {
+                                sShipInst = sShipInst + oData.results[i].EtText.Tdline + "\n";
+                            }
+
+                    }
+                    let modelOrderDetails = that.getView().getModel("modelOrderDetails");
+                    if (modelOrderDetails) {
+                        modelOrderDetails.setProperty("/ShipInstructions", sShipInst);
+                        // modelOrderDetails.setProperty("/RequestNotes", sRequestNotes);
+                    }
+                    that.getView().setModel(modelOrderDetails, "modelOrderDetails");
+
+                    debugger;
+                },
+                error: function (oError) {
+                    console.error("Error:", oError);
+                }
+            });
+        },
+
+        //End ..%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%//
 
         onSelectCustomer: function (oEvent) {
 

@@ -35,7 +35,7 @@ sap.ui.define([
 
             var oTable = this.getView().byId("tblEquipmentList");
             oTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
-            oTable.setVisibleRowCount(10);
+            oTable.setVisibleRowCount(3);
             this.getUser();
 
         },

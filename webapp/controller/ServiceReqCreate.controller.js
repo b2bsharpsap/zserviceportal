@@ -35,8 +35,8 @@ sap.ui.define([
             var oTable2 = this.getView().byId("idStatusHistoryTable");
             oTable2.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
             oTable2.setVisibleRowCount(3);
-
             */
+           
         },
 
 

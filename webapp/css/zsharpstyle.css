@@ -32453,7 +32453,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop .sapMBarTitleAlignAuto .sapMBarPH {
 
 .sapMBreadcrumbs .sapMSltIcon:before {
     font-family: "72-Light", "72-Lightfull", "72", "72full", Arial, Helvetica, sans-serif;
-    content: "â?¢â?¢â?¢ ";
+    content: "ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ ";
     vertical-align: text-top
 }
 
@@ -40332,6 +40332,277 @@ tabColHide{
 	background-color: green !important;
 
 }
+
+
+/* SHAIKD Enter your custom styles here -  04/11/2026 */
+
+/* ===================== START GRID & BUTTON ALIGNMENT ================== */
+/* ========================================================================
+   ZSERVICEPORTAL - CLIENT CSS FIXES (APPEND-ONLY / BASE PROJECT SAFE)
+   ------------------------------------------------------------------------
+   Append this complete section to the END of webapp/css/zsharpstyle.css.
+   Existing zsharpstyle.css content must not be edited or deleted.
+ 
+   Client issue IDs covered:
+     34, 36, 38, 39, 44, 47, 52, 55, 58, 63, 69, 70
+ 
+   Approved palette:
+     Button normal               : #9A9A9A
+     Button text/icon            : #FFFFFF
+     Hover / focus / active      : #CC0000
+     Grid header                 : #F2F2F2
+     Grid internal lines         : #E5E5E5
+     Grid outer border           : #D9D9D9
+   ======================================================================== */
+ 
+/* ------------------------------------------------------------------------
+   A. BUTTON STANDARDIZATION
+   Purpose: Issues 47, 58 and 70, plus the approved common button behavior.
+ 
+   Scope uses the EXISTING root sap.m.App id="app". No App.view.xml change is
+   required. Disabled buttons are excluded and retain the UI5 disabled style.
+   ------------------------------------------------------------------------ */
+ 
+ 
+ 
+ 
+/* Normal state: grey background + white text/icon. */
+[id$="--app"] .sapMBtn:not(.sapMBtnDisabled),
+.sapMMessageBox .sapMDialogFooter .sapMBtn:not(.sapMBtnDisabled) {
+    background-color: #9a9a9a !important;
+    border-color: #9a9a9a !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+ 
+[id$="--app"] .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner,
+.sapMMessageBox .sapMDialogFooter .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner {
+    background-image: none !important;
+    background-color: #9a9a9a !important;
+    border-color: #9a9a9a !important;
+    color: #ffffff !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+}
+ 
+/* Keep button text and icons white. */
+[id$="--app"] .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner .sapMBtnContent,
+[id$="--app"] .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner .sapMBtnContent bdi,
+[id$="--app"] .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner .sapMBtnIcon,
+[id$="--app"] .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner .sapUiIcon,
+.sapMMessageBox .sapMDialogFooter .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner .sapMBtnContent,
+.sapMMessageBox .sapMDialogFooter .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner .sapMBtnContent bdi,
+.sapMMessageBox .sapMDialogFooter .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner .sapMBtnIcon,
+.sapMMessageBox .sapMDialogFooter .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner .sapUiIcon {
+    color: #ffffff !important;
+    text-shadow: none !important;
+}
+ 
+/* Hover / focus / click / active: Sharp red + white text/icon. */
+[id$="--app"] .sapMBtn:not(.sapMBtnDisabled):hover,
+[id$="--app"] .sapMBtn:not(.sapMBtnDisabled):focus,
+[id$="--app"] .sapMBtn:not(.sapMBtnDisabled):active,
+.sapMMessageBox .sapMDialogFooter .sapMBtn:not(.sapMBtnDisabled):hover,
+.sapMMessageBox .sapMDialogFooter .sapMBtn:not(.sapMBtnDisabled):focus,
+.sapMMessageBox .sapMDialogFooter .sapMBtn:not(.sapMBtnDisabled):active {
+    background-color: #cc0000 !important;
+    border-color: #cc0000 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+ 
+[id$="--app"] .sapMBtn:not(.sapMBtnDisabled):hover > .sapMBtnInner,
+[id$="--app"] .sapMBtn:not(.sapMBtnDisabled):focus > .sapMBtnInner,
+[id$="--app"] .sapMBtn:not(.sapMBtnDisabled):active > .sapMBtnInner,
+[id$="--app"] .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive,
+[id$="--app"] .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner.sapMToggleBtnPressed,
+.sapMMessageBox .sapMDialogFooter .sapMBtn:not(.sapMBtnDisabled):hover > .sapMBtnInner,
+.sapMMessageBox .sapMDialogFooter .sapMBtn:not(.sapMBtnDisabled):focus > .sapMBtnInner,
+.sapMMessageBox .sapMDialogFooter .sapMBtn:not(.sapMBtnDisabled):active > .sapMBtnInner,
+.sapMMessageBox .sapMDialogFooter .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive,
+.sapMMessageBox .sapMDialogFooter .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner.sapMToggleBtnPressed {
+    background-image: none !important;
+    background-color: #cc0000 !important;
+    border-color: #cc0000 !important;
+    color: #ffffff !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+ 
+/* Remove UI5 blue/white inner focus ring/circle. */
+html.sap-desktop [id$="--app"] .sapMBtn:focus > .sapMFocusable:not(.sapMBadgeIndicator)::before,
+html.sap-desktop .sapMMessageBox .sapMDialogFooter .sapMBtn:focus > .sapMFocusable:not(.sapMBadgeIndicator)::before {
+    content: none !important;
+    display: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+ 
+[id$="--app"] .sapMBtn .sapMBtnFocusDiv,
+.sapMMessageBox .sapMDialogFooter .sapMBtn .sapMBtnFocusDiv {
+    display: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+ 
+[id$="--app"] .sapMBtn:focus,
+[id$="--app"] .sapMBtn:focus > .sapMBtnInner,
+.sapMMessageBox .sapMDialogFooter .sapMBtn:focus,
+.sapMMessageBox .sapMDialogFooter .sapMBtn:focus > .sapMBtnInner {
+    outline: none !important;
+    box-shadow: none !important;
+}
+ 
+html.sap-desktop [id$="--app"] .sapMBtn:focus > .sapMBtnEmphasized.sapMToggleBtnPressed.sapMFocusable:not(.sapMBadgeIndicator)::after,
+html.sap-desktop .sapMMessageBox .sapMDialogFooter .sapMBtn:focus > .sapMBtnEmphasized.sapMToggleBtnPressed.sapMFocusable:not(.sapMBadgeIndicator)::after {
+    content: none !important;
+    display: none !important;
+    border: 0 !important;
+}
+ 
+/* ------------------------------------------------------------------------
+   B. COLUMN CONFIGURATOR - KEEP EXISTING sap.m.Image
+   Purpose: Issue 34.
+ 
+   IMPORTANT: The existing Image control and press handler are retained.
+   This gives the existing clickable image a button-like grey/red treatment.
+   It intentionally does NOT convert the control to sap.m.Button.
+   ------------------------------------------------------------------------ */
+[id$="--imgConfigureCols"].sapMImg {
+    background-color: #9a9a9a !important;
+    border: 1px solid #9a9a9a !important;
+    border-radius: 0.125rem !important;
+    box-sizing: border-box !important;
+    padding: 0.1875rem !important;
+    cursor: pointer !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+ 
+[id$="--imgConfigureCols"].sapMImg:hover,
+[id$="--imgConfigureCols"].sapMImg:focus,
+[id$="--imgConfigureCols"].sapMImg:active {
+    background-color: #cc0000 !important;
+    border-color: #cc0000 !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+ 
+/* ------------------------------------------------------------------------
+   C. GRID / TABLE HEADER AND BORDER FIXES
+   Purpose: Issues 36, 38, 39, 44, 52, 55, 63 and 69.
+ 
+   Scope is limited to the five existing table IDs used by the reported
+   screens. Other application tables are not changed.
+   ------------------------------------------------------------------------ */
+ 
+/* Outer border: restores missing left / top / right edges. */
+[id$="--tblEquipmentList"].sapUiTable .sapUiTableCnt,
+[id$="--idTblServiceRequest"].sapUiTable .sapUiTableCnt,
+[id$="--idStatusHistoryTable"].sapUiTable .sapUiTableCnt,
+[id$="--tblConsOrdersList"].sapUiTable .sapUiTableCnt,
+[id$="--tblProduct"].sapUiTable .sapUiTableCnt,
+[id$="--tblMeterRead"].sapUiTable .sapUiTableCnt {
+    border: 1px solid #d9d9d9 !important;
+    box-sizing: border-box !important;
+}
+ 
+/* Light-grey table header. */
+[id$="--tblEquipmentList"].sapUiTable .sapUiTableColHdrCnt,
+[id$="--tblEquipmentList"].sapUiTable .sapUiTableColHdrScr,
+[id$="--tblEquipmentList"].sapUiTable .sapUiTableColHdr,
+[id$="--tblEquipmentList"].sapUiTable .sapUiTableCol,
+[id$="--tblEquipmentList"].sapUiTable .sapUiTableHeaderCell,
+[id$="--tblEquipmentList"].sapUiTable .sapUiTableHeaderDataCell,
+[id$="--idTblServiceRequest"].sapUiTable .sapUiTableColHdrCnt,
+[id$="--idTblServiceRequest"].sapUiTable .sapUiTableColHdrScr,
+[id$="--idTblServiceRequest"].sapUiTable .sapUiTableColHdr,
+[id$="--idTblServiceRequest"].sapUiTable .sapUiTableCol,
+[id$="--idTblServiceRequest"].sapUiTable .sapUiTableHeaderCell,
+[id$="--idTblServiceRequest"].sapUiTable .sapUiTableHeaderDataCell,
+[id$="--idStatusHistoryTable"].sapUiTable .sapUiTableColHdrCnt,
+[id$="--idStatusHistoryTable"].sapUiTable .sapUiTableColHdrScr,
+[id$="--idStatusHistoryTable"].sapUiTable .sapUiTableColHdr,
+[id$="--idStatusHistoryTable"].sapUiTable .sapUiTableCol,
+[id$="--idStatusHistoryTable"].sapUiTable .sapUiTableHeaderCell,
+[id$="--idStatusHistoryTable"].sapUiTable .sapUiTableHeaderDataCell,
+[id$="--tblConsOrdersList"].sapUiTable .sapUiTableColHdrCnt,
+[id$="--tblConsOrdersList"].sapUiTable .sapUiTableColHdrScr,
+[id$="--tblConsOrdersList"].sapUiTable .sapUiTableColHdr,
+[id$="--tblConsOrdersList"].sapUiTable .sapUiTableCol,
+[id$="--tblConsOrdersList"].sapUiTable .sapUiTableHeaderCell,
+[id$="--tblConsOrdersList"].sapUiTable .sapUiTableHeaderDataCell,
+[id$="--tblProduct"].sapUiTable .sapUiTableColHdrCnt,
+[id$="--tblProduct"].sapUiTable .sapUiTableColHdrScr,
+[id$="--tblProduct"].sapUiTable .sapUiTableColHdr,
+[id$="--tblProduct"].sapUiTable .sapUiTableCol,
+[id$="--tblProduct"].sapUiTable .sapUiTableHeaderCell,
+[id$="--tblProduct"].sapUiTable .sapUiTableHeaderDataCell,
+[id$="--tblMeterRead"].sapUiTable .sapUiTableColHdrCnt,
+[id$="--tblMeterRead"].sapUiTable .sapUiTableColHdrScr,
+[id$="--tblMeterRead"].sapUiTable .sapUiTableColHdr,
+[id$="--tblMeterRead"].sapUiTable .sapUiTableCol,
+[id$="--tblMeterRead"].sapUiTable .sapUiTableHeaderCell,
+[id$="--tblMeterRead"].sapUiTable .sapUiTableHeaderDataCell {
+    background-color: #f2f2f2 !important;
+}
+ 
+/* Vertical and horizontal cell/grid lines. */
+[id$="--tblEquipmentList"].sapUiTable .sapUiTableCol,
+[id$="--tblEquipmentList"].sapUiTable .sapUiTableHeaderCell,
+[id$="--tblEquipmentList"].sapUiTable .sapUiTableHeaderDataCell,
+[id$="--tblEquipmentList"].sapUiTable .sapUiTableDataCell,
+[id$="--tblEquipmentList"].sapUiTable .sapUiTableCtrl td,
+[id$="--idTblServiceRequest"].sapUiTable .sapUiTableCol,
+[id$="--idTblServiceRequest"].sapUiTable .sapUiTableHeaderCell,
+[id$="--idTblServiceRequest"].sapUiTable .sapUiTableHeaderDataCell,
+[id$="--idTblServiceRequest"].sapUiTable .sapUiTableDataCell,
+[id$="--idTblServiceRequest"].sapUiTable .sapUiTableCtrl td,
+[id$="--idStatusHistoryTable"].sapUiTable .sapUiTableCol,
+[id$="--idStatusHistoryTable"].sapUiTable .sapUiTableHeaderCell,
+[id$="--idStatusHistoryTable"].sapUiTable .sapUiTableHeaderDataCell,
+[id$="--idStatusHistoryTable"].sapUiTable .sapUiTableDataCell,
+[id$="--idStatusHistoryTable"].sapUiTable .sapUiTableCtrl td,
+[id$="--tblConsOrdersList"].sapUiTable .sapUiTableCol,
+[id$="--tblConsOrdersList"].sapUiTable .sapUiTableHeaderCell,
+[id$="--tblConsOrdersList"].sapUiTable .sapUiTableHeaderDataCell,
+[id$="--tblConsOrdersList"].sapUiTable .sapUiTableDataCell,
+[id$="--tblConsOrdersList"].sapUiTable .sapUiTableCtrl td,
+[id$="--tblProduct"].sapUiTable .sapUiTableCol,
+[id$="--tblProduct"].sapUiTable .sapUiTableHeaderCell,
+[id$="--tblProduct"].sapUiTable .sapUiTableHeaderDataCell,
+[id$="--tblProduct"].sapUiTable .sapUiTableDataCell,
+[id$="--tblProduct"].sapUiTable .sapUiTableCtrl td,
+[id$="--tblMeterRead"].sapUiTable .sapUiTableCol,
+[id$="--tblMeterRead"].sapUiTable .sapUiTableHeaderCell,
+[id$="--tblMeterRead"].sapUiTable .sapUiTableHeaderDataCell,
+[id$="--tblMeterRead"].sapUiTable .sapUiTableDataCell,
+[id$="--tblMeterRead"].sapUiTable .sapUiTableCtrl td {
+    border-right: 1px solid #e5e5e5 !important;
+    border-bottom: 1px solid #e5e5e5 !important;
+    box-sizing: border-box !important;
+}
+ 
+/* Header label emphasis to match the reference application. */
+[id$="--tblEquipmentList"].sapUiTable .sapUiTableHeaderDataCell .sapMLabel,
+[id$="--tblEquipmentList"].sapUiTable .sapUiTableHeaderDataCell .sapMText,
+[id$="--idTblServiceRequest"].sapUiTable .sapUiTableHeaderDataCell .sapMLabel,
+[id$="--idTblServiceRequest"].sapUiTable .sapUiTableHeaderDataCell .sapMText,
+[id$="--idStatusHistoryTable"].sapUiTable .sapUiTableHeaderDataCell .sapMLabel,
+[id$="--idStatusHistoryTable"].sapUiTable .sapUiTableHeaderDataCell .sapMText,
+[id$="--tblConsOrdersList"].sapUiTable .sapUiTableHeaderDataCell .sapMLabel,
+[id$="--tblConsOrdersList"].sapUiTable .sapUiTableHeaderDataCell .sapMText,
+[id$="--tblProduct"].sapUiTable .sapUiTableHeaderDataCell .sapMLabel,
+[id$="--tblProduct"].sapUiTable .sapUiTableHeaderDataCell .sapMText,
+[id$="--tblMeterRead"].sapUiTable .sapUiTableHeaderDataCell .sapMLabel,
+[id$="--tblMeterRead"].sapUiTable .sapUiTableHeaderDataCell .sapMText {
+    font-weight: 600 !important;
+}
+ 
+/* ===================== END CLIENT CSS FIXES ============================= */
+ 
+
 
 
 

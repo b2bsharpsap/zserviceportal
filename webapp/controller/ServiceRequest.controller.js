@@ -24,19 +24,17 @@ sap.ui.define([
 
             var oTable1 = this.getView().byId("idTblServiceRequest");
             oTable1.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
-            oTable1.setVisibleRowCount(10);
+            oTable1.setVisibleRowCount(3);
 
             var oTable2 = this.getView().byId("idStatusHistoryTable");
             oTable2.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed);
             oTable2.setVisibleRowCount(3);
-
-
         },
 
         _onObjectMatched: function (oEvent) {
             //var sEmployeeId = oEvent.getParameter("arguments").customer;
-            debugger;
-            console.log("ServiceRequest _onObjectMatched .... ");
+            //debugger;
+            //console.log("ServiceRequest _onObjectMatched .... ");
 
             var oGlobalModel = this.getOwnerComponent().getModel("modelGlobal");
             var oCustomerData = oGlobalModel.getProperty("/CustomerData");
@@ -54,6 +52,7 @@ sap.ui.define([
                 oGlobalModel.getProperty("/selectedEquipmentList");
 
             console.log("Selected Equipment List:", aSelectedEquipmentList);
+
             this.getServiceRequestList();
 
         },
@@ -96,8 +95,6 @@ sap.ui.define([
             //DO not delete
             //var sServiceRequest = "";
 
-            //var oModel = this.getView().getModel("modelB2BService");
-            //var sPath = "/SrvOrderListSet";
             var aFilters = [];
 
             var oGlobalModel =
@@ -114,7 +111,7 @@ sap.ui.define([
                 );
             });
 
-            console.log("Service  -  this.customerId : " + this.customerId);
+            //console.log("Service  -  this.customerId : " + this.customerId);
             //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
             aFilters = [
                 new sap.ui.model.Filter("IvSoldTo", sap.ui.model.FilterOperator.EQ, this.customerId),
@@ -131,47 +128,9 @@ sap.ui.define([
                     }))
             }
 
+            
+            this._clearModels();
             this._loadServiceRequestsList(aFilters);
-
-            /*
-            sap.ui.core.BusyIndicator.show();
-            var that = this;
-            console.log("Filter Info :", aFilters);
-            debugger;
-            oModel.read(sPath, {
-                filters: aFilters,
-                success: function (oData) {
-                    console.log(" SrvOrderListSet  Success:", oData);
-                    sap.ui.core.BusyIndicator.hide();
-                    debugger;
-                    var arrServiceReq = [];
-
-                    var oSrvModel = new sap.ui.model.json.JSONModel({
-                        results: oData.results
-                    });
-
-                    let intLength = oData.results.length;
-                    let strTabHeader = "Service Request List (" + intLength + ")";
-                    that.getView().byId("ttlSerReqList").setText(strTabHeader);	
-
-                    that.getView().setModel(oSrvModel, "modelServiceReq");
-                    // Optional: Refresh table binding
-                    that.byId("idTblServiceRequest").getBinding("items")?.refresh();
-                },
-                error: function (oError) {
-
-                    let oSrvModel = new sap.ui.model.json.JSONModel();
-                    that.getView().setModel(oSrvModel, "modelServiceReq");
-                    // Optional: Refresh table binding
-                    that.byId("idTblServiceRequest").getBinding("items")?.refresh();
-
-                    sap.ui.core.BusyIndicator.hide();
-                    console.error("Error:", oError);
-
-                }
-            });
-            */
-
 
         },
 
@@ -180,8 +139,6 @@ sap.ui.define([
             //DO not delete
             //var sServiceRequest = "";
 
-            //var oModel = this.getView().getModel("modelB2BService");
-            //var sPath = "/SrvOrderListSet";
             var aFilters = [];
 
             let sEquipmentId = this.byId("inpServEquipmentId").getValue();
@@ -218,61 +175,32 @@ sap.ui.define([
 
             ];
 
-            /*
-
-            if (aEqFilters.length > 0) {
-                aFilters.push(
-                    new sap.ui.model.Filter({
-                        filters: aEqFilters,
-                        and: false
-                    }))
-            }
-            */
-
+            this._clearModels();
             this._loadServiceRequestsList(aFilters);
-
-
-            /*
-            sap.ui.core.BusyIndicator.show();
-            var that = this;
-            console.log("Filter Info :", aFilters);
-            debugger;
-            oModel.read(sPath, {
-                filters: aFilters,
-                success: function (oData) {
-                    console.log(" SrvOrderListSet  Success:", oData);
-                    sap.ui.core.BusyIndicator.hide();
-                    debugger;
-                    var arrServiceReq = [];
-
-                    var oSrvModel = new sap.ui.model.json.JSONModel({
-                        results: oData.results
-                    });
-
-                    let intLength = oData.results.length;
-                    let strTabHeader = "Service Request List (" + intLength + ")";
-                    that.getView().byId("ttlSerReqList").setText(strTabHeader);	
-
-                    that.getView().setModel(oSrvModel, "modelServiceReq");
-                    // Optional: Refresh table binding
-                    that.byId("idTblServiceRequest").getBinding("items")?.refresh();
-                },
-                error: function (oError) {
-
-                    let oSrvModel = new sap.ui.model.json.JSONModel();
-                    that.getView().setModel(oSrvModel, "modelServiceReq");
-                    // Optional: Refresh table binding
-                    that.byId("idTblServiceRequest").getBinding("items")?.refresh();
-
-                    sap.ui.core.BusyIndicator.hide();
-                    console.error("Error:", oError);
-
-                }
-            });
-            */
 
         },
 
+        _clearModels : function(){
+
+            //Clear /Empty Models
+
+            var oServDetailsModel = this.getView().getModel("modelServiceDetails");
+            if (oServDetailsModel) {
+                oServDetailsModel.setData({});
+            }
+
+            var oServReqModel = this.getView().getModel("modelServReq");
+            if (oServReqModel) {
+                oServReqModel.setData({});
+            }
+
+            var oStatusModel = this.getView().getModel("modelStatusHis");
+            if (oStatusModel) {
+                oStatusModel.setData({
+                    StatusCollection: []
+                });
+            }
+        },
 
         _loadServiceRequestsList: function (aFilters) {
 
@@ -282,33 +210,6 @@ sap.ui.define([
             var oModel = this.getView().getModel("modelB2BService");
             var sPath = "/SrvOrderListSet";
 
-            /*
-            let sEquipmentId = this.byId("inpServEquipmentId").getValue();
-            let sCustEquipId = this.byId("inpCustEquipmentId").getValue();
-            let sModel = this.byId("inpServModel").getValue();
-            let sSerial = this.byId("inpServSerial").getValue();
-
-            let sSharpReqId = this.byId("inpSharpReqId").getValue();
-
-            console.log("Service  -  this.customerId : " + this.customerId);
-
-              var aFiltersXX = [];  
-            //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&//
-            aFiltersXX = [
-                new sap.ui.model.Filter("IvSoldTo", sap.ui.model.FilterOperator.EQ, this.customerId),
-                new sap.ui.model.Filter("IvUser", sap.ui.model.FilterOperator.EQ, this.SAPEPUser),
-                new sap.ui.model.Filter("IvOpen", sap.ui.model.FilterOperator.EQ, "O"),
-
-                new sap.ui.model.Filter("IvOrder", sap.ui.model.FilterOperator.EQ, sSharpReqId),
-
-                new sap.ui.model.Filter("IvEqId", sap.ui.model.FilterOperator.EQ, sEquipmentId),
-                new sap.ui.model.Filter("IvCustEq", sap.ui.model.FilterOperator.EQ, sCustEquipId),
-                new sap.ui.model.Filter("IvModel", sap.ui.model.FilterOperator.EQ, sModel),
-                new sap.ui.model.Filter("IvSerial", sap.ui.model.FilterOperator.EQ, sSerial)
-               
-            ];
-           
-            */
             sap.ui.core.BusyIndicator.show();
             var that = this;
             console.log("Filter Info :", aFilters);
@@ -548,6 +449,15 @@ sap.ui.define([
                             //*************************************** */
                             const oOrderInfo = oData.results[0].EsOrderInfo;
                             const oModelServReq = new sap.ui.model.json.JSONModel(oOrderInfo);
+
+
+                            oModelServReq.setProperty("/ContName", oData.results[0].EvContactName);
+                            oModelServReq.setProperty("/ContPhone", oData.results[0].EvContactPhone);
+
+                            oModelServReq.setProperty("/ServiceCategory", oData.results[0].EvCategory1);
+                            oModelServReq.setProperty("/ServiceItem", oData.results[0].EvCategory2);
+
+
                             that.getView().setModel(oModelServReq, "modelServReq");
 
                             //***************************************** */

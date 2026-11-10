@@ -107,7 +107,7 @@ sap.ui.define([
                     debugger;
                     if (oData.results && oData.results.length > 0) {
                         console.log("Results Length  : " + oData.results.length);
-                        console.log("Name : " + oData.results[0].EtSoldTo.Account);
+                        //console.log("Name : " + oData.results[0].EtSoldTo.Account);
 
                         arrLength = oData.results.length;
                         if (arrLength === 1 && oData.results[0].EtSoldTo.Account === "*") {
@@ -227,7 +227,7 @@ sap.ui.define([
 
             var modelCust = this.getView().getModel("modelCustomers");
 
-            console.log("Model Customer : " + modelCust);
+            //console.log("Model Customer : " + modelCust);
             // Get selected row/object from model
             var oSelectedItem = oEvent.getParameter("selectedItem");
             var oContext = oSelectedItem.getBindingContext("modelCustomers");
@@ -236,7 +236,7 @@ sap.ui.define([
             // Set address text
 
             this.byId("idTxtAddress").setText(oCustomer.Address);
-            console.log("Address:", oCustomer.Address);
+            //console.log("Address:", oCustomer.Address);
 
             //Setting Customer Details to Component Controller   
             let oGlobalModel = this.getOwnerComponent().getModel("modelGlobal");
@@ -301,6 +301,7 @@ sap.ui.define([
             let sEquipmentId = this.byId("inpEquipmentId").getValue();
             let sCustomerEquipId = this.byId("inpCustomerEquipId").getValue();
             let sSerial = this.byId("inpSerial").getValue();
+            let sModel = this.byId("inpModel").getValue();
 
             var oFilterData = {
                 SoldTo: this.CustomerID,
@@ -309,6 +310,7 @@ sap.ui.define([
 
                 EquipmentId: sEquipmentId,
                 SerialNo: sSerial,
+                Model : sModel,
                 CustomerEquip: sCustomerEquipId
             };
             this.byId("vwEquipmentList").getController()
